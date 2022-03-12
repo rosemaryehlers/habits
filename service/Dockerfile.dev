@@ -1,0 +1,3 @@
+FROM golang
+WORKDIR /app
+ENTRYPOINT ["/bin/bash"]
