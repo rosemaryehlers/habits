@@ -1,4 +1,4 @@
-package httptemplate
+package main
 
 import (
 	"log"

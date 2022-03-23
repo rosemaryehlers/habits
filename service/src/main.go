@@ -6,8 +6,6 @@ import(
 	"math/rand"
 	"net/http"
 	"time"
-
-	"lib/httptemplate"
 )
 
 func main() {
@@ -40,3 +38,4 @@ func main() {
 
 	l.Begin()
 }
+// test
