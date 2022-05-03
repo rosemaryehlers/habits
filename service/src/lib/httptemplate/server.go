@@ -32,7 +32,7 @@ type ServerConfig struct {
 	// InviteTTL  time.Duration
 }
 
-type server struct {
+type Server struct {
 	// db     *Repository
 	// redis  *Redis
 	// users  *UsersClient
@@ -43,7 +43,21 @@ type server struct {
 	config ServerConfig
 }
 
-func (s *server) Reload() ConfigFunc {
+type RouteConfig struct {
+	Method string
+	Path string
+	Handler http.HandlerFunc
+}
+var registeredRoutes []*RouteConfig
+
+func CreateServer(r *Router) *Server {
+	s := &Server{
+		router: r,
+	}
+	return s
+}
+
+func (s *Server) Reload() ConfigFunc {
 	return func() {
 		// s.config.Jwt.Name = viper.GetString("JWT.Name")
 		// s.config.Jwt.Domain = viper.GetString("JWT.Domain")
@@ -66,7 +80,7 @@ func (s *server) Reload() ConfigFunc {
 	}
 }
 
-func (s *server) Start() {
+func (s *Server) Start() {
 	s.http = &http.Server{
 		Addr:    ":80",
 		Handler: s.router,
@@ -83,20 +97,34 @@ func (s *server) Start() {
 	}()
 }
 
-func (s *server) Stop() {
+func (s *Server) Stop() {
 	if s.http != nil {
 		s.http.Shutdown(context.Background())
 	}
 }
 
-func (s *server) CheckHealth() http.HandlerFunc {
+func (s *Server) CheckHealth() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}
 }
 
-func (s *server) routes() {
-	s.router.HandleFunc("GET", "/health", s.CheckHealth())
+func (s *Server) AddRoute(method string, path string, handler http.HandlerFunc) {
+	rConfig := &RouteConfig{
+		Method: method,
+		Path: path,
+		Handler: handler,
+	}
+	registeredRoutes = append(registeredRoutes, rConfig)
+}
+
+func (s *Server) RegisterRoutes() {
+	//s.router.HandleFunc("GET", "/health", s.CheckHealth())
+
+	for _, rc := range registeredRoutes {
+		s.router.HandleFunc(rc.Method, rc.Path, rc.Handler)
+	}
+
 	//s.router.HandleFunc("GET", "/metrics", promhttp.Handler().ServeHTTP)
 
 	// s.router.HandleFunc("GET", "/v1/register/:username", HttpMetrics(s.BeginRegistration()))

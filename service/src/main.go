@@ -4,26 +4,24 @@ import(
 	//"fmt"
 	"log"
 	"math/rand"
-	//"net/http"
+	"net/http"
 	"time"
+
+	h "httptemplate.local/m/v2"
 )
 
 func main() {
-	l := &Lifecycle{}
-	c := &Configurator{}
+	l := &h.Lifecycle{}
+	c := &h.Configurator{}
 
-	s := &server{
-		router: NewRouter(),
-		db:     d,
-		wa:     w,
-		redis:  r,
-		users:  u,
-	}
+	s := h.CreateServer(h.NewRouter())
+
+	s.AddRoute("GET", "/health", CheckHealth())
 
 	l.AddStartupFunc(func() {
 		log.Print("Starting")
 		rand.Seed(time.Now().UnixNano())
-		s.routes()
+		s.RegisterRoutes()
 		c.LoadConfig()
 		s.Start()
 	})
@@ -37,5 +35,11 @@ func main() {
 	l.AddReloadFunc(c.LoadConfig)
 
 	l.Begin()
+}
+
+func CheckHealth() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}
 }
 // test
