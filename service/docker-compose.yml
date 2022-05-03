@@ -13,4 +13,4 @@ services:
       context: ./
       dockerfile: ./Dockerfile.dev
     volumes:
-      - ./service/src:/app
+      - ./src:/app
