@@ -1,10 +1,10 @@
 package main
 
 import(
-	"fmt"
+	//"fmt"
 	"log"
 	"math/rand"
-	"net/http"
+	//"net/http"
 	"time"
 )
 
