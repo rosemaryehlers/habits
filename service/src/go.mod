@@ -2,8 +2,6 @@ module src/habits
 
 go 1.17
 
-replace httptemplate.local/m/v2 => ./lib/httptemplate
-
 require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -22,5 +20,4 @@ require (
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	httptemplate.local/m/v2 v2.0.0 // indirect
 )

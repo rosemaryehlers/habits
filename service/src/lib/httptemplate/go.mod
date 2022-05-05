@@ -1,3 +1,0 @@
-module httptemplate.local/m/v2
-
-go 1.17

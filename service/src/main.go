@@ -7,7 +7,7 @@ import(
 	"net/http"
 	"time"
 
-	h "httptemplate.local/m/v2"
+	h "src/habits/lib/httptemplate"
 )
 
 func main() {
