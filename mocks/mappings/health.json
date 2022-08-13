@@ -1,0 +1,13 @@
+{
+    "request": {
+        "url": "/health",
+        "method": "GET"
+    },
+    "response": {
+        "status": 200,
+        "body": "{}",
+        "headers": {
+            "content-type": "application/json"
+        }
+    }
+}
