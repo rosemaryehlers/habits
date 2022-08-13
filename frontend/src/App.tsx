@@ -1,5 +1,6 @@
 import CurrentItems from './CurrentItems';
 import Navigation from './Navigation';
+import './App.css';
 
 function App() {
   let navProps = {

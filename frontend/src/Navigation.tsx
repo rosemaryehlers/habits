@@ -4,7 +4,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './Navigation.css';
 import icongear from 'bootstrap-icons/icons/gear-fill.svg'
-import { Dropdown } from 'react-bootstrap';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Button from 'react-bootstrap/Button';
 
 interface NavigationProps {
     dueDate: string;
@@ -19,7 +20,7 @@ class Navigation extends React.Component<NavigationProps, {}> {
                 <Row>
                     <Col className='left'>
                         <Dropdown>
-                            <Dropdown.Toggle size='sm' variant='primary' id='viewselector'>{this.props.selectedView}</Dropdown.Toggle>
+                            <Dropdown.Toggle size='sm' variant='outline-primary' id='viewselector'>{this.props.selectedView}</Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.ItemText>Select View</Dropdown.ItemText>
                                 <Dropdown.Divider />
@@ -35,7 +36,9 @@ class Navigation extends React.Component<NavigationProps, {}> {
                         <label>Due:</label>{this.props.dueDate}
                     </Col>
                     <Col className='right'>
-                        <img src={icongear} alt='Settings' className='icon gear' />
+                        <Button variant="outline-secondary" size="sm">
+                            <img src={icongear} alt='Settings' className='icon gear' />
+                        </Button>{' '}
                     </Col>
                 </Row>
             </Container>
