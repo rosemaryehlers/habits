@@ -21,7 +21,7 @@ class App extends React.Component<AppProps, AppState> {
     this.setState({
       navigation: {
         selectedView: "Common", // eventually switch these to api call
-        views: ["Common", "Bathroom", "Empty"],
+        views: ["Common", "Bathroom", "Empty", "Error"],
         onSelectedViewChange: this.onSelectedViewChange,
       }
     });
@@ -29,7 +29,6 @@ class App extends React.Component<AppProps, AppState> {
 
   onSelectedViewChange(view: string) {
     if(this.state.navigation.selectedView === view){
-      console.log("Selected view is current view, no change");
       return;
     }
 

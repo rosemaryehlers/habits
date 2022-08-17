@@ -23,6 +23,7 @@ export interface CurrentItemsProps extends GlobalProps {
 }
 interface CurrentItemsState {
     items: Array<CurrentItem>;
+    error: boolean;
 }
 
 function ItemStatus(item: CurrentItem) {
@@ -42,12 +43,18 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
     constructor(props: CurrentItemsProps) {
         super(props);
         this.state = {
-            items: []
+            items: [],
+            error: true
         }
     }
 
-    componentDidMount(){
+    fetchCurrentItems(){
+        if(this.props.selectedView === undefined || this.props.selectedView === null || this.props.selectedView === ""){
+            return; 
+        }
+
         const currentItemsPath = "/currentitems";
+        let err = false;
 
         var url = this.props.global.baseUrl 
         + ":" + this.props.global.port 
@@ -57,21 +64,34 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
             method: "GET"
         }).then(resp => {
             if(!resp.ok){
-                console.log("Error: " + resp.status);
+                console.log("Error fetching current items: " + resp.status);
+                err = true;
                 return undefined;
             } else {
                 return resp.json();
             }
         }).then(data => {
+            let newItems = [];
             if(data != undefined){
-                this.setState({
-                    items: data.Items
-                });
+                newItems = data.Items;
             }
+            this.setState({
+                items: newItems,
+                error: err
+            });
         })
     }
 
-    render() {
+    componentDidMount() {
+        this.fetchCurrentItems();
+    }
+    componentDidUpdate(prevProps: CurrentItemsProps) {
+        if (this.props.selectedView != prevProps.selectedView){
+            this.fetchCurrentItems();
+        }
+    }
+
+    renderPopulatedResponse() {
         return (
             <Container fluid className="current-items">
                 {
@@ -95,6 +115,16 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
                 }
             </Container>
         );
+    }
+
+    render() {
+        if (this.state.error){
+            return (<div className="error">Error occurred.</div>);
+        } else if (this.state.items.length === 0){
+            return (<div className="empty">No items found!</div>);
+        }
+
+        return this.renderPopulatedResponse();
     }
 }
 

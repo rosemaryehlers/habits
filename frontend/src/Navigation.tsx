@@ -23,7 +23,6 @@ class Navigation extends React.Component<CombinedNavigationProps, {}> {
     }
 
     onViewChange(e: any){
-        console.log("Change view to: " + e.target.text);
         this.props.onSelectedViewChange(e.target.text);
     }
 
