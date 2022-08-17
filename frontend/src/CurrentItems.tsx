@@ -6,7 +6,7 @@ import Stack from 'react-bootstrap/Stack';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import Button from 'react-bootstrap/Button';
-import GlobalProps from './GlobalProps';
+import { GlobalProps } from './GlobalProps';
 
 interface CurrentItemStatus {
     goal?: number;
@@ -18,8 +18,8 @@ interface CurrentItem {
     type: string;
     status: CurrentItemStatus;
 }
-interface CurrentItemsProps extends GlobalProps {
-    selectedView: string;
+export interface CurrentItemsProps extends GlobalProps {
+    selectedView?: string;
 }
 interface CurrentItemsState {
     items: Array<CurrentItem>;
@@ -49,10 +49,12 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
     componentDidMount(){
         const currentItemsPath = "/currentitems";
 
-        var url = this.props.global.baseUrl + ":" + this.props.global.port + currentItemsPath;
+        var url = this.props.global.baseUrl 
+        + ":" + this.props.global.port 
+        + currentItemsPath
+        + "?view=" + this.props.selectedView;
         fetch(url, {
-            method: "GET",
-            mode: "no-cors"
+            method: "GET"
         }).then(resp => {
             if(!resp.ok){
                 console.log("Error: " + resp.status);

@@ -6,21 +6,30 @@ import './Navigation.css';
 import icongear from 'bootstrap-icons/icons/gear-fill.svg'
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
+import { GlobalProps } from './GlobalProps';
 
-interface NavigationProps {
-    dueDate: string;
-    selectedView: string;
+export interface NavigationProps extends GlobalProps {
     views: Array<string>;
+    selectedView?: string;
+    onSelectedViewChange(view: string): any;
 }
 
 class Navigation extends React.Component<NavigationProps, {}> {
+    constructor(props: NavigationProps) {
+        super(props);
+    }
+
+    onViewChange(e: any){
+        console.log(e.target.value);
+    }
+
     render(){
         return (
             <Container fluid className='navigation'>
                 <Row>
                     <Col className='left'>
                         <Dropdown>
-                            <Dropdown.Toggle size='sm' variant='outline-primary' id='viewselector'>{this.props.selectedView}</Dropdown.Toggle>
+                            <Dropdown.Toggle onClick={this.onViewChange} id='viewselector' size='sm' variant='outline-primary'>{this.props.selectedView}</Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.ItemText>Select View</Dropdown.ItemText>
                                 <Dropdown.Divider />
@@ -31,9 +40,6 @@ class Navigation extends React.Component<NavigationProps, {}> {
                                 }
                             </Dropdown.Menu>
                         </Dropdown>
-                    </Col>
-                    <Col className='center'>
-                        <label>Due:</label>{this.props.dueDate}
                     </Col>
                     <Col className='right'>
                         <Button variant="outline-secondary" size="sm">

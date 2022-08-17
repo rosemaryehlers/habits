@@ -1,3 +1,40 @@
+[{
+    "Guid": "67ae335b-5d79-42dc-8ca7-236280ab9113",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/currentitems",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Params": [
+            {
+                "Name": "view",
+                "Matchers": [
+                    {
+                        "Name": "WildcardMatcher",
+                        "Pattern": "Empty",
+                        "IgnoreCase": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "DueDate": "Thursday, May 14th",
+            "Items": []
+        }
+    }
+},
 {
     "Guid": "67ae335b-5d79-42dc-8ca7-236280ab9112",
     "Request": {
@@ -9,10 +46,26 @@
                     "IgnoreCase": true
                 }
             ]
-        }
+        },
+        "Params": [
+            {
+                "Name": "view",
+                "Matchers": [
+                    {
+                        "Name": "WildcardMatcher",
+                        "Pattern": "Common",
+                        "IgnoreCase": true
+                    }
+                ]
+            }
+        ]
     },
     "Response": {
         "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
         "BodyAsJson": {
             "DueDate": "Thursday, May 14th",
             "Items": [
@@ -52,9 +105,6 @@
                     }
                 }
             ]
-        },
-        "Headers": {
-            "Content-Type": "application/json"
         }
     }
-}
+}]
