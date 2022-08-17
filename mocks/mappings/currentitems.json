@@ -1,0 +1,60 @@
+{
+    "Guid": "67ae335b-5d79-42dc-8ca7-236280ab9112",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/currentitems",
+                    "IgnoreCase": true
+                }
+            ]
+        }
+    },
+    "Response": {
+        "StatusCode": 200,
+        "BodyAsJson": {
+            "DueDate": "Thursday, May 14th",
+            "Items": [
+                {
+                    "id": 1,
+                    "name": "Clean Kitchen",
+                    "type": "finite",
+                    "status": {
+                        "goal": 1,
+                        "count": 0
+                    }
+                },
+                {
+                    "id": 2,
+                    "name": "Clean Bathroom",
+                    "type": "finite",
+                    "status": {
+                        "goal": 1,
+                        "count": 1
+                    }
+                },
+                {
+                    "id": 3,
+                    "name": "Daily Chores",
+                    "type": "infinite",
+                    "status": {
+                        "count": 2
+                    }
+                },
+                {
+                    "id": 4,
+                    "name": "Exercise",
+                    "type": "finite",
+                    "status": {
+                        "goal": 4,
+                        "count": 1
+                    }
+                }
+            ]
+        },
+        "Headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

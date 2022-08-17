@@ -6,6 +6,7 @@ import Stack from 'react-bootstrap/Stack';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import Button from 'react-bootstrap/Button';
+import GlobalProps from './GlobalProps';
 
 interface CurrentItemStatus {
     goal?: number;
@@ -17,7 +18,7 @@ interface CurrentItem {
     type: string;
     status: CurrentItemStatus;
 }
-interface CurrentItemsProps {
+interface CurrentItemsProps extends GlobalProps {
     selectedView: string;
 }
 interface CurrentItemsState {
@@ -41,44 +42,31 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
     constructor(props: CurrentItemsProps) {
         super(props);
         this.state = {
-            items: [
-                {
-                    id: 1,
-                    name: "Clean Kitchen",
-                    type: "finite",
-                    status: {
-                        goal: 1,
-                        count: 0
-                    }
-                },
-                {
-                    id: 2,
-                    name: "Clean Bathroom",
-                    type: "finite",
-                    status: {
-                        goal: 1,
-                        count: 1
-                    }
-                },
-                {
-                    id: 3,
-                    name: "Daily Chores",
-                    type: "infinite",
-                    status: {
-                        count: 2
-                    }
-                },
-                {
-                    id: 4,
-                    name: "Exercise",
-                    type: "finite",
-                    status: {
-                        goal: 4,
-                        count: 1
-                    }
-                }
-            ]
+            items: []
         }
+    }
+
+    componentDidMount(){
+        const currentItemsPath = "/currentitems";
+
+        var url = this.props.global.baseUrl + ":" + this.props.global.port + currentItemsPath;
+        fetch(url, {
+            method: "GET",
+            mode: "no-cors"
+        }).then(resp => {
+            if(!resp.ok){
+                console.log("Error: " + resp.status);
+                return undefined;
+            } else {
+                return resp.json();
+            }
+        }).then(data => {
+            if(data != undefined){
+                this.setState({
+                    items: data.Items
+                });
+            }
+        })
     }
 
     render() {

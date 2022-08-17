@@ -1,13 +1,21 @@
 {
-    "request": {
-        "url": "/health",
-        "method": "GET"
+    "Guid": "67ae335b-5d79-42dc-8ca7-236280ab9111",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/health",
+                    "IgnoreCase": true
+                }
+            ]
+        }
     },
-    "response": {
-        "status": 200,
-        "body": "{}",
-        "headers": {
-            "content-type": "application/json"
+    "Response": {
+        "StatusCode": 200,
+        "Body": "{}",
+        "Headers": {
+            "Content-Type": "application/json"
         }
     }
 }
