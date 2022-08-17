@@ -80,7 +80,7 @@
                 },
                 {
                     "id": 2,
-                    "name": "Clean Bathroom",
+                    "name": "Clean Living Room",
                     "type": "finite",
                     "status": {
                         "goal": 1,
@@ -102,6 +102,70 @@
                     "status": {
                         "goal": 4,
                         "count": 1
+                    }
+                }
+            ]
+        }
+    }
+},
+{
+    "Guid": "67ae335b-5d79-42dc-8ca7-236280ab9114",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/currentitems",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Params": [
+            {
+                "Name": "view",
+                "Matchers": [
+                    {
+                        "Name": "WildcardMatcher",
+                        "Pattern": "Bathroom",
+                        "IgnoreCase": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "DueDate": "Thursday, May 14th",
+            "Items": [
+                {
+                    "id": 11,
+                    "name": "Clean",
+                    "type": "finite",
+                    "status": {
+                        "goal": 1,
+                        "count": 0
+                    }
+                },
+                {
+                    "id": 22,
+                    "name": "Brush Teeth",
+                    "type": "infinite",
+                    "status": {
+                        "count": 2
+                    }
+                },
+                {
+                    "id": 33,
+                    "name": "Floss",
+                    "type": "finite",
+                    "status": {
+                        "goal": 4,
+                        "count": 3
                     }
                 }
             ]

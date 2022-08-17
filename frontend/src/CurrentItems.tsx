@@ -78,7 +78,7 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
                     this.state.items.map(item => (
                         <Row>
                             <Col className="left">
-                                    <span>{item.name}</span>
+                                <span>{item.name}</span>
                             </Col>
                             <Col className="right">
                                 <Stack direction="horizontal" gap={1}>

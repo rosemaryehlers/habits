@@ -8,19 +8,23 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { GlobalProps } from './GlobalProps';
 
-export interface NavigationProps extends GlobalProps {
+export interface NavigationProps {
     views: Array<string>;
     selectedView?: string;
     onSelectedViewChange(view: string): any;
 }
+export interface CombinedNavigationProps extends GlobalProps, NavigationProps {
+}
 
-class Navigation extends React.Component<NavigationProps, {}> {
-    constructor(props: NavigationProps) {
+class Navigation extends React.Component<CombinedNavigationProps, {}> {
+    constructor(props: CombinedNavigationProps) {
         super(props);
+        this.onViewChange = this.onViewChange.bind(this);
     }
 
     onViewChange(e: any){
-        console.log(e.target.value);
+        console.log("Change view to: " + e.target.text);
+        this.props.onSelectedViewChange(e.target.text);
     }
 
     render(){
@@ -29,13 +33,13 @@ class Navigation extends React.Component<NavigationProps, {}> {
                 <Row>
                     <Col className='left'>
                         <Dropdown>
-                            <Dropdown.Toggle onClick={this.onViewChange} id='viewselector' size='sm' variant='outline-primary'>{this.props.selectedView}</Dropdown.Toggle>
+                            <Dropdown.Toggle id='viewselector' size='sm' variant='outline-primary'>{this.props.selectedView}</Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.ItemText>Select View</Dropdown.ItemText>
                                 <Dropdown.Divider />
                                 {
                                     this.props.views.filter(v => v !== this.props.selectedView).map(view => (
-                                    <Dropdown.Item href={"#/" + view}>{view}</Dropdown.Item>
+                                    <Dropdown.Item onClick={this.onViewChange} href={"#/" + view} value={view} key={view}>{view}</Dropdown.Item>
                                     ))
                                 }
                             </Dropdown.Menu>
