@@ -103,6 +103,15 @@
                         "goal": 4,
                         "count": 1
                     }
+                },
+                {
+                    "id": 666,
+                    "name": "Error",
+                    "type": "finite",
+                    "status": {
+                        "goal": 1,
+                        "count": 0
+                    }
                 }
             ]
         }

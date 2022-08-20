@@ -1,8 +1,10 @@
 import React from 'react';
+import Alert from 'react-bootstrap/Alert';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Stack from 'react-bootstrap/Stack';
+import Toast from 'react-bootstrap/Toast';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import Button from 'react-bootstrap/Button';
@@ -23,29 +25,74 @@ export interface CurrentItemsProps extends GlobalProps {
 }
 interface CurrentItemsState {
     items: Array<CurrentItem>;
-    error: boolean;
+    errorMsg?: string;
+    errorTimeout?: NodeJS.Timeout;
+    showUndoMark: boolean;
+    undoTimeout?: NodeJS.Timeout;
+    lastMarkedId?: number;
 }
 
-function ItemStatus(item: CurrentItem) {
-    var status = [];
-    if (item.type === "finite" && item.status.goal != undefined) {
-        for(var i = 0; i < item.status.goal - item.status.count; i++){
-            status.push(<img src={iconcheck} className="svg-grey-light" />);
-        }
-    }
-    for(var i = 0; i < item.status.count; i++){
-        status.push(<img src={iconcheck} className="svg-green" />);
-    }
-    return status;
-}
+const timeoutMilliseconds = 5000;
 
 class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState> {
     constructor(props: CurrentItemsProps) {
         super(props);
         this.state = {
             items: [],
-            error: true
+            errorMsg: undefined,
+            errorTimeout: undefined,
+            showUndoMark: false,
+            undoTimeout: undefined,
+            lastMarkedId: undefined
         }
+        this.onMarkItem = this.onMarkItem.bind(this);
+        this.dismissErrorAlert = this.dismissErrorAlert.bind(this);
+        this.dismissUndoAlert = this.dismissUndoAlert.bind(this);
+    }
+
+    dismissErrorAlert(){
+        if(this.state.errorTimeout){
+            clearTimeout(this.state.errorTimeout);
+        }
+
+        this.setState({
+            errorMsg: undefined,
+            errorTimeout: undefined
+        });
+    }
+    showErrorAlert(msg: string){
+        if (this.state.errorTimeout){
+            clearTimeout(this.state.errorTimeout);
+        }
+
+        let timeout = setTimeout(this.dismissErrorAlert, timeoutMilliseconds);
+        this.setState({
+            errorMsg: msg,
+            errorTimeout: timeout
+        });
+    }
+
+    dismissUndoAlert(){
+        if(this.state.undoTimeout){
+            clearTimeout(this.state.undoTimeout);
+        }
+        this.setState({
+            lastMarkedId: undefined,
+            undoTimeout: undefined,
+            showUndoMark: false
+        });
+    }
+    showUndoMark(lastId: number){
+        if(this.state.undoTimeout){
+            clearTimeout(this.state.undoTimeout);
+        }
+
+        let timeout = setTimeout(this.dismissUndoAlert, timeoutMilliseconds);
+        this.setState({
+            lastMarkedId: lastId,
+            undoTimeout: timeout,
+            showUndoMark: true
+        });
     }
 
     fetchCurrentItems(){
@@ -54,7 +101,6 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         }
 
         const currentItemsPath = "/currentitems";
-        let err = false;
 
         var url = this.props.global.baseUrl 
         + ":" + this.props.global.port 
@@ -64,36 +110,93 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
             method: "GET"
         }).then(resp => {
             if(!resp.ok){
-                console.log("Error fetching current items: " + resp.status);
-                err = true;
+                console.log(`Error ${resp.status} fetching current items for view ${this.props.selectedView}: ${resp.statusText}`);
+                this.showErrorAlert("Error fetching items.");
                 return undefined;
             } else {
                 return resp.json();
             }
         }).then(data => {
-            let newItems = [];
-            if(data != undefined){
-                newItems = data.Items;
+            if(data !== undefined){
+                this.setState({
+                    items: data.Items,
+                    errorMsg: undefined
+                });
             }
-            this.setState({
-                items: newItems,
-                error: err
-            });
-        })
+        }).catch(err => {
+            console.log(`Error fetching current items for view ${this.props.selectedView}: ${err}`);
+            this.showErrorAlert("Error fetching items.");
+        });
+    }
+
+    onMarkItem(e: any){
+        let itemId = parseInt(e.currentTarget.id, 10);
+
+        if(isNaN(itemId)){
+            this.showErrorAlert("Invalid id, could not mark item.");
+            e.preventDefault();
+            return;
+        }
+
+        const markItemUrl = "/mark-item";
+        var url = this.props.global.baseUrl
+            + ":" + this.props.global.port
+            + markItemUrl;
+        let data = {
+            id: itemId,
+            action: "complete"
+        };
+
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify(data)
+        }).then(resp => {
+            if(!resp.ok){
+                console.log(`Error ${resp.status} marking item ${itemId}: ${resp.statusText}`);
+                this.showErrorAlert("Error marking item.");
+            } else {
+                // marked successfully, give option to undo
+                this.showUndoMark(itemId);
+            }
+        }).catch(err => {
+            console.log("Ya done ducked up", err);
+            this.showErrorAlert("Error marking item.");
+        });
     }
 
     componentDidMount() {
         this.fetchCurrentItems();
     }
     componentDidUpdate(prevProps: CurrentItemsProps) {
-        if (this.props.selectedView != prevProps.selectedView){
+        if (this.props.selectedView !== prevProps.selectedView){
             this.fetchCurrentItems();
         }
     }
 
-    renderPopulatedResponse() {
+    itemStatus(item: CurrentItem) {
+        var status = [];
+        if (item.type === "finite" && item.status.goal !== undefined) {
+            for(var i = 0; i < item.status.goal - item.status.count; i++){
+                status.push(<img src={iconcheck} className="svg-grey-light" alt="incomplete" />);
+            }
+        }
+        for(i = 0; i < item.status.count; i++){
+            status.push(<img src={iconcheck} className="svg-green" alt="complete" />);
+        }
+        return status;
+    }
+
+    renderItems() {
+        if(this.state.items === undefined || this.state.items.length === 0){
+            return (
+                <Container fluid className="empty">
+                    No items found!
+                </Container>
+            );
+        }
+
         return (
-            <Container fluid className="current-items">
+            <div>
                 {
                     this.state.items.map(item => (
                         <Row>
@@ -103,28 +206,36 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
                             <Col className="right">
                                 <Stack direction="horizontal" gap={1}>
                                     <div className="status">
-                                        {ItemStatus(item)}
+                                        {this.itemStatus(item)}
                                     </div>
-                                    <Button variant="primary" size="sm" disabled={(item.type != "infinite" && item.status.goal != undefined && item.status.goal === item.status.count)}>
-                                        <img src={iconcheck} className="svg-white" />
+                                    <Button onClick={this.onMarkItem} id={item.id + ""} variant="primary" size="sm" disabled={(item.type !== "infinite" && item.status.goal !== undefined && item.status.goal === item.status.count)}>
+                                        <img src={iconcheck} className="svg-white" alt="complete task" />
                                     </Button>{' '}
                                 </Stack>
                             </Col>
                         </Row>
                     ))
                 }
-            </Container>
+            </div>
         );
     }
 
     render() {
-        if (this.state.error){
-            return (<div className="error">Error occurred.</div>);
-        } else if (this.state.items.length === 0){
-            return (<div className="empty">No items found!</div>);
-        }
-
-        return this.renderPopulatedResponse();
+        return (
+            <Container fluid className="current-items">
+                {this.renderItems()}
+                <Alert variant="danger" dismissible show={this.state.errorMsg !== undefined}
+                    onClose={this.dismissErrorAlert}>
+                    <span>{this.state.errorMsg}</span>
+                </Alert>
+                <Alert variant="success" dismissible show={this.state.showUndoMark}
+                    onClose={ this.dismissUndoAlert }>
+                    <span>Success!
+                        <Alert.Link last-id={this.state.lastMarkedId}>Undo</Alert.Link>
+                    </span>
+                </Alert>
+            </Container>
+        );
     }
 }
 
