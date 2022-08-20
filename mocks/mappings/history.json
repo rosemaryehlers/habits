@@ -1,0 +1,67 @@
+[{
+    "Guid": "531fe79b-5444-4d20-9d21-debf4cb13a5e",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/history",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Params": [
+            {
+                "Name": "view",
+                "Pattern": "Common",
+                "IgnoreCase": true
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "Items": [
+                {
+                    "id": 1,
+                    "name": "Clean Kitchen",
+                    "type": "finite",
+                    "status": {
+                        "goal": 1,
+                        "count": 0
+                    }
+                },
+                {
+                    "id": 2,
+                    "name": "Clean Living Room",
+                    "type": "finite",
+                    "status": {
+                        "goal": 1,
+                        "count": 1
+                    }
+                },
+                {
+                    "id": 3,
+                    "name": "Daily Chores",
+                    "type": "infinite",
+                    "status": {
+                        "count": 2
+                    }
+                },
+                {
+                    "id": 4,
+                    "name": "Exercise",
+                    "type": "finite",
+                    "status": {
+                        "goal": 4,
+                        "count": 1
+                    }
+                }
+            ]
+        }
+    }
+}]

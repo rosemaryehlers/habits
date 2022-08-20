@@ -7,11 +7,15 @@ import icongear from 'bootstrap-icons/icons/gear-fill.svg'
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { GlobalProps } from './GlobalProps';
+import DropdownItem from 'react-bootstrap/esm/DropdownItem';
 
 export interface NavigationProps {
     views: Array<string>;
     selectedView?: string;
     onSelectedViewChange(view: string): any;
+    modes: Array<string>;
+    selectedMode?: string;
+    onSelectedModeChange(mode: string): any;
 }
 export interface CombinedNavigationProps extends GlobalProps, NavigationProps {
 }
@@ -20,10 +24,14 @@ class Navigation extends React.Component<CombinedNavigationProps, {}> {
     constructor(props: CombinedNavigationProps) {
         super(props);
         this.onViewChange = this.onViewChange.bind(this);
+        this.onModeChange = this.onModeChange.bind(this);
     }
 
     onViewChange(e: any){
         this.props.onSelectedViewChange(e.target.text);
+    }
+    onModeChange(e: any){
+        this.props.onSelectedModeChange(e.target.text);
     }
 
     render(){
@@ -32,13 +40,23 @@ class Navigation extends React.Component<CombinedNavigationProps, {}> {
                 <Row>
                     <Col className='left'>
                         <Dropdown>
-                            <Dropdown.Toggle id='viewselector' size='sm' variant='outline-primary'>{this.props.selectedView}</Dropdown.Toggle>
+                            <Dropdown.Toggle size='sm' variant='outline-primary'>{this.props.selectedView}</Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.ItemText>Select View</Dropdown.ItemText>
                                 <Dropdown.Divider />
                                 {
                                     this.props.views.filter(v => v !== this.props.selectedView).map(view => (
-                                    <Dropdown.Item onClick={this.onViewChange} href={"#/" + view} value={view} key={view}>{view}</Dropdown.Item>
+                                    <Dropdown.Item onClick={this.onViewChange} value={view} key={view}>{view}</Dropdown.Item>
+                                    ))
+                                }
+                            </Dropdown.Menu>
+                        </Dropdown>
+                        <Dropdown>
+                            <Dropdown.Toggle size='sm' variant='outline-primary'>{this.props.selectedMode}</Dropdown.Toggle>
+                            <Dropdown.Menu>
+                                {
+                                    this.props.modes.filter(m => m !== this.props.selectedMode).map(mode => (
+                                        <Dropdown.Item onClick={this.onModeChange} value={mode} key={mode}>{mode}</Dropdown.Item>
                                     ))
                                 }
                             </Dropdown.Menu>

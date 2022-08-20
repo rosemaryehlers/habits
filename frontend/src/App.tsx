@@ -1,9 +1,9 @@
 import React from 'react'
 import CurrentItems, { CurrentItemsProps } from './CurrentItems';
-import Navigation, { NavigationProps } from './Navigation';
-import { CombinedNavigationProps } from './Navigation';
+import Navigation, { NavigationProps, CombinedNavigationProps } from './Navigation';
 import './App.css';
 import { GlobalProps } from './GlobalProps';
+import History, { HistoryProps } from './History';
 
 interface AppProps extends GlobalProps {}
 
@@ -15,6 +15,7 @@ class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps){
     super(props);
     this.onSelectedViewChange = this.onSelectedViewChange.bind(this);
+    this.onSelectedModeChange = this.onSelectedModeChange.bind(this);
   }
 
   componentDidMount(){
@@ -23,6 +24,9 @@ class App extends React.Component<AppProps, AppState> {
         selectedView: "Common", // eventually switch these to api call
         views: ["Common", "Bathroom", "Empty", "Error"],
         onSelectedViewChange: this.onSelectedViewChange,
+        selectedMode: "Current",
+        modes: ["Current", "History"],
+        onSelectedModeChange: this.onSelectedModeChange,
       }
     });
   }
@@ -39,6 +43,18 @@ class App extends React.Component<AppProps, AppState> {
     });
   }
 
+  onSelectedModeChange(mode: string){
+    if(this.state.navigation.selectedMode === mode){
+      return;
+    }
+
+    let newNavObj = {...this.state.navigation};
+    newNavObj.selectedMode = mode;
+    this.setState({
+      navigation: newNavObj
+    });
+  }
+
   render(){
     if(this.state === undefined || this.state === null){
       return (<div>Loading...</div>);
@@ -48,11 +64,20 @@ class App extends React.Component<AppProps, AppState> {
         selectedView: this.state.navigation.selectedView
       } as CurrentItemsProps;
       let navigationProps = {...this.state.navigation, global: this.props.global} as CombinedNavigationProps;
+      let historyProps = {
+        global: this.props.global,
+        selectedView: this.state.navigation.selectedView
+      } as HistoryProps;
       
       return (
         <div>
           <Navigation {...navigationProps} />
-          <CurrentItems {...currentItemsProps} />
+          {this.state.navigation.selectedMode === "Current" &&
+            <CurrentItems {...currentItemsProps} />
+          }
+          {this.state.navigation.selectedMode === "History" &&
+            <History {...historyProps } />
+          }
         </div>
       );
     }
