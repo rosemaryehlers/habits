@@ -17,6 +17,11 @@
     margin-bottom: 5px;
 }
 
+.current-items .due-date {
+    text-align: center;
+    padding: 10px 0 10px 0;
+}
+
 .current-items span.assigned {
     font-size: small;
     color: #a6a6a6;

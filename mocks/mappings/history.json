@@ -31,8 +31,8 @@
                     "name": "Clean Kitchen",
                     "type": "finite",
                     "status": {
-                        "goal": 1,
-                        "count": 0
+                        "goal": 6,
+                        "count": 4
                     }
                 },
                 {
@@ -40,8 +40,8 @@
                     "name": "Clean Living Room",
                     "type": "finite",
                     "status": {
-                        "goal": 1,
-                        "count": 1
+                        "goal": 6,
+                        "count": 6
                     }
                 },
                 {
@@ -49,7 +49,7 @@
                     "name": "Daily Chores",
                     "type": "infinite",
                     "status": {
-                        "count": 2
+                        "count": 8
                     }
                 },
                 {
@@ -57,8 +57,8 @@
                     "name": "Exercise",
                     "type": "finite",
                     "status": {
-                        "goal": 4,
-                        "count": 1
+                        "goal": 24,
+                        "count": 19
                     }
                 }
             ]

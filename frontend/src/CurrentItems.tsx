@@ -9,6 +9,7 @@ import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import Button from 'react-bootstrap/Button';
 import { GlobalProps } from './GlobalProps';
+import { time } from 'console';
 
 interface CurrentItemStatus {
     goal?: number;
@@ -24,6 +25,7 @@ export interface CurrentItemsProps extends GlobalProps {
     selectedView?: string;
 }
 interface CurrentItemsState {
+    dueDate?: Date;
     items: Array<CurrentItem>;
     errorMsg?: string;
     errorTimeout?: NodeJS.Timeout;
@@ -38,6 +40,7 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
     constructor(props: CurrentItemsProps) {
         super(props);
         this.state = {
+            dueDate: undefined, 
             items: [],
             errorMsg: undefined,
             errorTimeout: undefined,
@@ -118,9 +121,12 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
             }
         }).then(data => {
             if(data !== undefined){
+                var due = new Date(data.DueDate);
+
                 this.setState({
                     items: data.Items,
-                    errorMsg: undefined
+                    dueDate: isNaN(due.getTime()) ? undefined : due,
+                    errorMsg: isNaN(due.getTime()) ? "Invalid due date." : undefined
                 });
             }
         }).catch(err => {
@@ -186,6 +192,19 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         return status;
     }
 
+    formatDueDate(due?: Date){
+        if(due === undefined){
+            return "";
+        }
+
+        var opts = {
+            weekday: "short",
+            month: "numeric",
+            day: "numeric"
+        } as Intl.DateTimeFormatOptions;
+        return due.toLocaleDateString("en-us", opts);
+    }
+
     renderItems() {
         if(this.state.items === undefined || this.state.items.length === 0){
             return (
@@ -197,6 +216,11 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
 
         return (
             <div>
+                <Row className="content-header">
+                    <Col>
+                        <span><b>Due: </b></span>{ this.formatDueDate(this.state.dueDate) }
+                    </Col>
+                </Row>
                 {
                     this.state.items.map(item => (
                         <Row>

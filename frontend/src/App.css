@@ -7,3 +7,8 @@
 .svg-grey-light {
   filter: invert(100%) sepia(0%) saturate(3847%) hue-rotate(9deg) brightness(119%) contrast(80%);
 }
+
+.content-header {
+  text-align: center;
+  padding: 10px 0 10px 0;
+}

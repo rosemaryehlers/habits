@@ -18,7 +18,6 @@
     justify-content: right;
 }
 
-.navigation label {
-    font-weight: bold;
-    margin-right: 5px;
+.navigation .dropdown {
+    padding-right: 10px;
 }

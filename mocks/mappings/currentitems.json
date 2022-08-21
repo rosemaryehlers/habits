@@ -30,7 +30,7 @@
             "Access-Control-Allow-Origin": "*"
         },
         "BodyAsJson": {
-            "DueDate": "Thursday, May 14th",
+            "DueDate": "01/14/2022",
             "Items": []
         }
     }
@@ -67,7 +67,7 @@
             "Access-Control-Allow-Origin": "*"
         },
         "BodyAsJson": {
-            "DueDate": "Thursday, May 14th",
+            "DueDate": "01/14/2022",
             "Items": [
                 {
                     "id": 1,
@@ -149,7 +149,7 @@
             "Access-Control-Allow-Origin": "*"
         },
         "BodyAsJson": {
-            "DueDate": "Thursday, May 14th",
+            "DueDate": "01/14/2022",
             "Items": [
                 {
                     "id": 11,
