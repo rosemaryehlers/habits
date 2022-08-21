@@ -3,5 +3,6 @@ export interface GlobalProps {
     {
         baseUrl: string;
         port: number;
+        showErrorAlert(msg: string) : any;
     }
 }

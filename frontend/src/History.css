@@ -1,0 +1,13 @@
+.history .col.right {
+    align-items: center;
+}
+.history .btn-link {
+    padding-left: 0;
+}
+
+span.success {
+    color: #198754;
+}
+span.fail {
+    color: #dc3545;
+}

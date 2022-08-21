@@ -27,8 +27,6 @@ export interface CurrentItemsProps extends GlobalProps {
 interface CurrentItemsState {
     dueDate?: Date;
     items: Array<CurrentItem>;
-    errorMsg?: string;
-    errorTimeout?: NodeJS.Timeout;
     showUndoMark: boolean;
     undoTimeout?: NodeJS.Timeout;
     lastMarkedId?: number;
@@ -42,37 +40,12 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         this.state = {
             dueDate: undefined, 
             items: [],
-            errorMsg: undefined,
-            errorTimeout: undefined,
             showUndoMark: false,
             undoTimeout: undefined,
             lastMarkedId: undefined
         }
         this.onMarkItem = this.onMarkItem.bind(this);
-        this.dismissErrorAlert = this.dismissErrorAlert.bind(this);
         this.dismissUndoAlert = this.dismissUndoAlert.bind(this);
-    }
-
-    dismissErrorAlert(){
-        if(this.state.errorTimeout){
-            clearTimeout(this.state.errorTimeout);
-        }
-
-        this.setState({
-            errorMsg: undefined,
-            errorTimeout: undefined
-        });
-    }
-    showErrorAlert(msg: string){
-        if (this.state.errorTimeout){
-            clearTimeout(this.state.errorTimeout);
-        }
-
-        let timeout = setTimeout(this.dismissErrorAlert, timeoutMilliseconds);
-        this.setState({
-            errorMsg: msg,
-            errorTimeout: timeout
-        });
     }
 
     dismissUndoAlert(){
@@ -114,7 +87,7 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} fetching current items for view ${this.props.selectedView}: ${resp.statusText}`);
-                this.showErrorAlert("Error fetching items.");
+                this.props.global.showErrorAlert("Error fetching items.");
                 return undefined;
             } else {
                 return resp.json();
@@ -122,16 +95,18 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         }).then(data => {
             if(data !== undefined){
                 var due = new Date(data.DueDate);
+                if(isNaN(due.getTime())){
+                    this.props.global.showErrorAlert("Invalid due date.");
+                }
 
                 this.setState({
                     items: data.Items,
-                    dueDate: isNaN(due.getTime()) ? undefined : due,
-                    errorMsg: isNaN(due.getTime()) ? "Invalid due date." : undefined
+                    dueDate: isNaN(due.getTime()) ? undefined : due
                 });
             }
         }).catch(err => {
             console.log(`Error fetching current items for view ${this.props.selectedView}: ${err}`);
-            this.showErrorAlert("Error fetching items.");
+            this.props.global.showErrorAlert("Error fetching items.");
         });
     }
 
@@ -139,7 +114,7 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         let itemId = parseInt(e.currentTarget.id, 10);
 
         if(isNaN(itemId)){
-            this.showErrorAlert("Invalid id, could not mark item.");
+            this.props.global.showErrorAlert("Invalid id, could not mark item.");
             e.preventDefault();
             return;
         }
@@ -159,14 +134,14 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} marking item ${itemId}: ${resp.statusText}`);
-                this.showErrorAlert("Error marking item.");
+                this.props.global.showErrorAlert("Error marking item.");
             } else {
                 // marked successfully, give option to undo
                 this.showUndoMark(itemId);
             }
         }).catch(err => {
             console.log("Ya done ducked up", err);
-            this.showErrorAlert("Error marking item.");
+            this.props.global.showErrorAlert("Error marking item.");
         });
     }
 
@@ -208,7 +183,7 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
     renderItems() {
         if(this.state.items === undefined || this.state.items.length === 0){
             return (
-                <Container fluid className="empty">
+                <Container fluid className="content-header">
                     No items found!
                 </Container>
             );
@@ -248,10 +223,6 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         return (
             <Container fluid className="current-items">
                 {this.renderItems()}
-                <Alert variant="danger" dismissible show={this.state.errorMsg !== undefined}
-                    onClose={this.dismissErrorAlert}>
-                    <span>{this.state.errorMsg}</span>
-                </Alert>
                 <Alert variant="success" dismissible show={this.state.showUndoMark}
                     onClose={ this.dismissUndoAlert }>
                     <span>Success!

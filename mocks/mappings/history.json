@@ -33,6 +33,10 @@
                     "status": {
                         "goal": 6,
                         "count": 4
+                    },
+                    "threshold": {
+                        "success": 85,
+                        "fail": 67
                     }
                 },
                 {
@@ -42,6 +46,10 @@
                     "status": {
                         "goal": 6,
                         "count": 6
+                    },
+                    "threshold": {
+                        "success": 85,
+                        "fail": 67
                     }
                 },
                 {
@@ -50,6 +58,10 @@
                     "type": "infinite",
                     "status": {
                         "count": 8
+                    },
+                    "threshold": {
+                        "success": 9,
+                        "fail": 5
                     }
                 },
                 {
@@ -59,6 +71,10 @@
                     "status": {
                         "goal": 24,
                         "count": 19
+                    },
+                    "threshold": {
+                        "success": 85,
+                        "fail": 67
                     }
                 }
             ]

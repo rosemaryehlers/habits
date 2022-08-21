@@ -1,25 +1,6 @@
-.current-items .row {
-    border-bottom: 1px solid #f2f2f2;
-}
-
-.current-items .col.left {
-    display: flex;
-    align-items: center;
-}
-
-.current-items .col.right {
-    display: flex;
-    justify-content: right;
-}
-
 .current-items .col.right button {
     margin-top: 5px;
     margin-bottom: 5px;
-}
-
-.current-items .due-date {
-    text-align: center;
-    padding: 10px 0 10px 0;
 }
 
 .current-items span.assigned {

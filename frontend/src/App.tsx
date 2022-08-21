@@ -1,21 +1,53 @@
 import React from 'react'
+import Alert from 'react-bootstrap/Alert';
 import CurrentItems, { CurrentItemsProps } from './CurrentItems';
 import Navigation, { NavigationProps, CombinedNavigationProps } from './Navigation';
 import './App.css';
 import { GlobalProps } from './GlobalProps';
 import History, { HistoryProps } from './History';
+import { Container } from 'react-bootstrap';
 
-interface AppProps extends GlobalProps {}
-
+interface AppProps {
+  baseUrl: string,
+  port: number;
+}
 interface AppState {
   navigation: NavigationProps;
+  errorMsg?: string;
+  errorTimeout?: NodeJS.Timeout;
 }
+
+const timeoutMilliseconds = 5000;
 
 class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps){
     super(props);
     this.onSelectedViewChange = this.onSelectedViewChange.bind(this);
     this.onSelectedModeChange = this.onSelectedModeChange.bind(this);
+    this.dismissErrorAlert = this.dismissErrorAlert.bind(this);
+    this.showErrorAlert = this.showErrorAlert.bind(this);
+  }
+
+  dismissErrorAlert(){
+    if(this.state.errorTimeout){
+        clearTimeout(this.state.errorTimeout);
+    }
+
+    this.setState({
+        errorMsg: undefined,
+        errorTimeout: undefined
+    });
+  }
+  showErrorAlert(msg: string){
+      if (this.state.errorTimeout){
+          clearTimeout(this.state.errorTimeout);
+      }
+
+      let timeout = setTimeout(this.dismissErrorAlert, timeoutMilliseconds);
+      this.setState({
+          errorMsg: msg,
+          errorTimeout: timeout
+      });
   }
 
   componentDidMount(){
@@ -59,25 +91,38 @@ class App extends React.Component<AppProps, AppState> {
     if(this.state === undefined || this.state === null){
       return (<div>Loading...</div>);
     } else {
+      let globalProps = {
+        global: {
+          baseUrl: this.props.baseUrl,
+          port: this.props.port,
+          showErrorAlert: this.showErrorAlert
+        }
+      } as GlobalProps;
       let currentItemsProps = {
-        global: this.props.global,
+        global: globalProps.global,
         selectedView: this.state.navigation.selectedView
       } as CurrentItemsProps;
-      let navigationProps = {...this.state.navigation, global: this.props.global} as CombinedNavigationProps;
+      let navigationProps = {...this.state.navigation, global: globalProps.global} as CombinedNavigationProps;
       let historyProps = {
-        global: this.props.global,
+        global: globalProps.global,
         selectedView: this.state.navigation.selectedView
       } as HistoryProps;
       
       return (
         <div>
           <Navigation {...navigationProps} />
-          {this.state.navigation.selectedMode === "Current" &&
-            <CurrentItems {...currentItemsProps} />
-          }
-          {this.state.navigation.selectedMode === "History" &&
-            <History {...historyProps } />
-          }
+          <Container fluid className="page-content">
+            {this.state.navigation.selectedMode === "Current" &&
+              <CurrentItems {...currentItemsProps} />
+            }
+            {this.state.navigation.selectedMode === "History" &&
+              <History {...historyProps } />
+            }
+            <Alert variant="danger" dismissible show={this.state.errorMsg !== undefined}
+                onClose={this.dismissErrorAlert}>
+                <span>{this.state.errorMsg}</span>
+            </Alert>
+          </Container>
         </div>
       );
     }

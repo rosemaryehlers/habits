@@ -12,3 +12,18 @@
   text-align: center;
   padding: 10px 0 10px 0;
 }
+
+.page-content .row {
+  border-bottom: 1px solid #f2f2f2;
+  height: 42px;
+}
+
+.page-content .col.left {
+  display: flex;
+  align-items: center;
+}
+
+.page-content .col.right {
+  display: flex;
+  justify-content: right;
+}
