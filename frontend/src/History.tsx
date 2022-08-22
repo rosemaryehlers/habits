@@ -91,7 +91,6 @@ class History extends React.Component<HistoryProps, HistoryState> {
             }
         }).then(data => {
             if(data !== undefined){
-                console.log(data.items);
                 this.setState({
                     items: data.items,
                     errorMsg: undefined,
@@ -166,9 +165,6 @@ class History extends React.Component<HistoryProps, HistoryState> {
 
         return (
             <Container fluid className="history page-content">
-                <Row className="content-header">
-                    <Col>Showing history for last <b>6</b> weeks</Col>
-                </Row>
                 <Row hidden={this.state.items !== undefined && this.state.items.length > 0}>
                     No items found!
                 </Row>

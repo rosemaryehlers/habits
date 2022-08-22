@@ -21,3 +21,13 @@
 .navigation .dropdown {
     padding-right: 10px;
 }
+
+#weeksInput input {
+    display: inline;
+    width: 35px;
+    margin: 0px 5px;
+    text-align: center;
+}
+#weeksInput .form-text {
+    color: #000000;
+}

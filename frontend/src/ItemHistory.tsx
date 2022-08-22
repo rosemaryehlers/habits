@@ -1,13 +1,23 @@
 import React from 'react';
+import { Row, Col, Button } from 'react-bootstrap';
 import { GlobalProps } from './GlobalProps';
 
 export interface ItemHistoryProps extends GlobalProps {
     itemId: number;
 }
 
+interface Entry {
+    dueDate: string;
+    count: number;
+}
+interface ItemMetadata {
+    name: string;
+    type: string;
+    goal?: number;
+}
 interface ItemHistoryState {
-    entries: Array<any>;
-    errorMsg?: string;
+    entries: Array<Entry>;
+    itemMetadata?: ItemMetadata;
 }
 
 const historyPath = "/history";
@@ -18,16 +28,14 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
 
         this.state = {
             entries: [],
-            errorMsg: undefined
+            itemMetadata: undefined,
         };
     }
 
 
     fetchItemHistory(){
         if(this.props.itemId === undefined || isNaN(this.props.itemId)){
-            this.setState({
-                errorMsg: `Unable to fetch item history, invalid id: ${this.props.itemId}`
-            });
+            this.props.global.showErrorAlert(`Unable to fetch item history, invalid id: ${this.props.itemId}`);
             return;
         }
 
@@ -38,50 +46,86 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
         fetch(url, { method: "GET" }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} fetching history for item ${this.props.itemId}: ${resp.statusText}`);
-                this.setState({
-                    errorMsg: "Error fetching history for item."
-                    // don't clear itemId; just because we failed to fetch the history,
-                    // doesn't mean we've moved from the current attempted "view"
-                });
                 return undefined;
             }
 
             return resp.json();
         }).then(data => {
             if(data === undefined){
-                console.log(`Error parsing json response for item history.`);
-                this.setState({
-                    errorMsg: "Error fetching history for item."
-                });
+                this.props.global.showErrorAlert("Error fetching history for item.");
                 return;
             }
 
-            console.log(data.entries);
+            let metadata = {
+                name: data.name,
+                type: data.type
+            } as ItemMetadata;
+            if(data.goal !== undefined){
+                metadata.goal = data.goal;
+            }
+
             this.setState({
                 entries: data.entries,
-                errorMsg: undefined
+                itemMetadata: metadata
             });
         }).catch(err => {
             console.log(`Error fetching history for item ${this.props.itemId}: ${err}`);
-            this.setState({
-                errorMsg: "Error fetching history for item."
-            });
+            this.props.global.showErrorAlert("Error fetching history for item.");
         });
     }
 
     componentDidMount(){
-        console.log("Item history did mount.");
         this.fetchItemHistory();
     }
     componentDidUpdate(prevProps: ItemHistoryProps){
-        console.log(`Item history did update. Prev: ${prevProps.itemId}, current: ${this.props.itemId}`);
         if(this.props.itemId !== prevProps.itemId){
             this.fetchItemHistory();
         }
     }
 
+    renderEntrySuccess(entry: Entry){
+        if(this.state.itemMetadata === undefined){
+            this.props.global.showErrorAlert("No item metadata!");
+            return;
+        }
+
+        if(this.state.itemMetadata.type === "infinite"){
+            return (<span>{ entry.count }</span>);
+        }
+        else if(this.state.itemMetadata.type === "finite"){
+            if(this.state.itemMetadata.goal === undefined){
+                this.props.global.showErrorAlert("No goal for finite item type.");
+                return;
+            }
+
+            let color = entry.count >= this.state.itemMetadata.goal ? "success" : "fail";
+            return (<span className={color}>{entry.count} / {this.state.itemMetadata.goal}</span>);
+        }
+
+        this.props.global.showErrorAlert("Unknown item type " + this.state.itemMetadata.type);
+        return;
+    }
+
     render() {
-        return (<div>Item history!</div>);
+        return (
+            <div className="item-history">
+                {
+                    this.state.entries.map(entry => (
+                        <Row>
+                            <Col className="left">
+                                { (new Date(entry.dueDate)).toLocaleDateString("en-us", {month: '2-digit', day: '2-digit'}) }
+                            </Col>
+                            <Col className="right">
+                                { this.renderEntrySuccess(entry) }
+                            </Col>
+                        </Row>
+                    ))
+                }
+                <Col className="content-header">
+                    <Button size="sm" variant="outline-secondary">Back</Button>
+                </Col>
+            </div>
+        );
     }
 }
 

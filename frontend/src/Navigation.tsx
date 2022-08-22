@@ -8,6 +8,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { GlobalProps } from './GlobalProps';
 import DropdownItem from 'react-bootstrap/esm/DropdownItem';
+import { Form } from 'react-bootstrap';
 
 export interface NavigationProps {
     views: Array<string>;
@@ -32,6 +33,26 @@ class Navigation extends React.Component<CombinedNavigationProps, {}> {
     }
     onModeChange(e: any){
         this.props.onSelectedModeChange(e.target.text);
+    }
+    onWeeksChange(e: any){
+        console.log(e);
+        e.preventDefault();
+    }
+
+    renderWeeksInput(){
+        if(this.props.selectedMode === "History"){
+            return (
+                <Col className="center">
+                    <Form id="weeksInput" onSubmit={ this.onWeeksChange }>
+                        <Form.Text>Showing history for last</Form.Text>
+                        <Form.Control disabled defaultValue={6} required size="sm"></Form.Control>
+                        <Form.Text>weeks</Form.Text>
+                    </Form>
+                </Col>
+            );
+        }
+
+        return;
     }
 
     render(){
@@ -62,6 +83,7 @@ class Navigation extends React.Component<CombinedNavigationProps, {}> {
                             </Dropdown.Menu>
                         </Dropdown>
                     </Col>
+                    { this.renderWeeksInput() }
                     <Col className='right'>
                         <Button variant="outline-secondary" size="sm">
                             <img src={icongear} alt='Settings' className='icon gear' />
