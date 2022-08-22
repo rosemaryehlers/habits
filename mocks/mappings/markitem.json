@@ -1,5 +1,47 @@
 [{
     "Guid": "68ae335b-5d79-42dc-8ca7-236280ab9111",
+    "Priority": 1,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/mark-item",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post", "get"],
+        "Params": [
+            {
+                "Name": "id",
+                "Matchers": [
+                    {
+                        "Name": "ExactMatcher",
+                        "Pattern": "666"
+                    }
+                ]
+            }
+        ],
+        "Body": {
+            "Matcher": {
+                "Name": "JsonMatcher",
+                "IgnoreCase": true,
+                "Pattern": "{\"action\":\"complete\",\"id\":666}"
+            }
+        }
+    },
+    "Response": {
+        "StatusCode": 500,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},
+{
+    "Guid": "69ae335b-5d79-42dc-8ca7-236280ab9112",
     "Priority": 100,
     "Request": {
         "Path": {
@@ -11,7 +53,7 @@
                 }
             ]
         },
-        "Methods": ["post"]
+        "Methods": ["post", "get"]
     },
     "Response": {
         "StatusCode": 200,
