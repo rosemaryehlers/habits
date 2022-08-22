@@ -11,23 +11,12 @@
                 }
             ]
         },
-        "Methods": ["post", "get"],
-        "Params": [
-            {
-                "Name": "id",
-                "Matchers": [
-                    {
-                        "Name": "ExactMatcher",
-                        "Pattern": "666"
-                    }
-                ]
-            }
-        ],
+        "Methods": ["post"],
         "Body": {
             "Matcher": {
-                "Name": "JsonMatcher",
+                "Name": "JsonPartialMatcher",
                 "IgnoreCase": true,
-                "Pattern": "{\"action\":\"complete\",\"id\":666}"
+                "Pattern": "{\"id\":666}"
             }
         }
     },
@@ -53,7 +42,7 @@
                 }
             ]
         },
-        "Methods": ["post", "get"]
+        "Methods": ["post"]
     },
     "Response": {
         "StatusCode": 200,

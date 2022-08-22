@@ -56,8 +56,9 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
                 return;
             }
 
+            console.log(data.entries);
             this.setState({
-                entries: data.Entries,
+                entries: data.entries,
                 errorMsg: undefined
             });
         }).catch(err => {

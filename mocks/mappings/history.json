@@ -1,5 +1,6 @@
 [{
     "Guid": "531fe79b-5444-4d20-9d21-debf4cb13a5e",
+    "Priority": 1,
     "Request": {
         "Path": {
             "Matchers": [
@@ -13,8 +14,11 @@
         "Params": [
             {
                 "Name": "view",
-                "Pattern": "Common",
-                "IgnoreCase": true
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "Common"
+                }]
             }
         ]
     },
@@ -25,7 +29,7 @@
             "Access-Control-Allow-Origin": "*"
         },
         "BodyAsJson": {
-            "Items": [
+            "items": [
                 {
                     "id": 1,
                     "name": "Clean Kitchen",
@@ -76,6 +80,67 @@
                         "success": 85,
                         "fail": 67
                     }
+                }
+            ]
+        }
+    }
+},
+{
+    "Guid": "155e0e75-7863-43fd-86b2-2c9ef172718a",
+    "Priority": 2,
+    "Request": {
+        "Path": {
+            "Matchers": [{
+                "Name": "WildcardMatcher",
+                "IgnoreCase": true,
+                "Pattern": "/history"
+            }]
+        },
+        "Params": [
+            {
+                "Name": "id",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "1"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "name": "Clean Kitchen",
+            "type": "finite",
+            "goal": 6,
+            "entries": [
+                {
+                    "dueDate": "06-14-2022",
+                    "count": 4
+                },
+                {
+                    "dueDate": "06-07-2022",
+                    "count": 6
+                },
+                {
+                    "dueDate": "06-01-2022",
+                    "count": 5
+                },
+                {
+                    "dueDate": "05-21-2022",
+                    "count": 1
+                },
+                {
+                    "dueDate": "05-14-2022",
+                    "count": 4
+                },
+                {
+                    "dueDate": "05-07-2022",
+                    "count": 5
                 }
             ]
         }

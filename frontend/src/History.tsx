@@ -91,8 +91,9 @@ class History extends React.Component<HistoryProps, HistoryState> {
             }
         }).then(data => {
             if(data !== undefined){
+                console.log(data.items);
                 this.setState({
-                    items: data.Items,
+                    items: data.items,
                     errorMsg: undefined,
                     itemId: undefined
                 });
