@@ -27,48 +27,18 @@ export interface CurrentItemsProps extends GlobalProps {
 interface CurrentItemsState {
     dueDate?: Date;
     items: Array<CurrentItem>;
-    showUndoMark: boolean;
-    undoTimeout?: NodeJS.Timeout;
-    lastMarkedId?: number;
 }
 
-const timeoutMilliseconds = 5000;
+const timeoutMilliseconds = 50000;
 
 class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState> {
     constructor(props: CurrentItemsProps) {
         super(props);
         this.state = {
             dueDate: undefined, 
-            items: [],
-            showUndoMark: false,
-            undoTimeout: undefined,
-            lastMarkedId: undefined
+            items: []
         }
         this.onMarkItem = this.onMarkItem.bind(this);
-        this.dismissUndoAlert = this.dismissUndoAlert.bind(this);
-    }
-
-    dismissUndoAlert(){
-        if(this.state.undoTimeout){
-            clearTimeout(this.state.undoTimeout);
-        }
-        this.setState({
-            lastMarkedId: undefined,
-            undoTimeout: undefined,
-            showUndoMark: false
-        });
-    }
-    showUndoMark(lastId: number){
-        if(this.state.undoTimeout){
-            clearTimeout(this.state.undoTimeout);
-        }
-
-        let timeout = setTimeout(this.dismissUndoAlert, timeoutMilliseconds);
-        this.setState({
-            lastMarkedId: lastId,
-            undoTimeout: timeout,
-            showUndoMark: true
-        });
     }
 
     fetchCurrentItems(){
@@ -137,7 +107,7 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
                 this.props.global.showErrorAlert("Error marking item.");
             } else {
                 // marked successfully, give option to undo
-                this.showUndoMark(itemId);
+                this.props.global.showUndoMarkAlert(itemId);
             }
         }).catch(err => {
             console.log("Ya done ducked up", err);
@@ -223,12 +193,6 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         return (
             <Container fluid className="current-items">
                 {this.renderItems()}
-                <Alert variant="success" dismissible show={this.state.showUndoMark}
-                    onClose={ this.dismissUndoAlert }>
-                    <span>Success!
-                        <Alert.Link last-id={this.state.lastMarkedId}>Undo</Alert.Link>
-                    </span>
-                </Alert>
             </Container>
         );
     }
