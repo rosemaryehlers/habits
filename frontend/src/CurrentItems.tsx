@@ -27,18 +27,73 @@ export interface CurrentItemsProps extends GlobalProps {
 interface CurrentItemsState {
     dueDate?: Date;
     items: Array<CurrentItem>;
+    lastMarkedId?: number;
+    undoTimeout?: NodeJS.Timeout;
+    showUndoSuccess: boolean;
+    undoSuccessTimeout?: NodeJS.Timeout;
 }
 
-const timeoutMilliseconds = 50000;
+const timeoutMilliseconds = 5000;
+const markItemUrl = "/mark-item";
 
 class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState> {
     constructor(props: CurrentItemsProps) {
         super(props);
-        this.state = {
-            dueDate: undefined, 
-            items: []
+        this.state = { 
+            items: [],
+            showUndoSuccess: false
         }
         this.onMarkItem = this.onMarkItem.bind(this);
+        this.onUnMarkItem = this.onUnMarkItem.bind(this);
+        this.dismissUndoAlert = this.dismissUndoAlert.bind(this);
+        this.showUndoAlert = this.showUndoAlert.bind(this);
+        this.showUndoSuccessAlert = this.showUndoSuccessAlert.bind(this);
+        this.dismissUndoSuccessAlert = this.dismissUndoSuccessAlert.bind(this);
+    }
+
+
+    showUndoAlert(itemId: number){
+        if(this.state.undoTimeout !== undefined){
+            clearTimeout(this.state.undoTimeout);
+        }
+
+        var timeout = setTimeout(this.dismissUndoAlert, timeoutMilliseconds);
+        this.setState({
+            lastMarkedId: itemId,
+            undoTimeout: timeout
+        });
+    }
+    dismissUndoAlert(){
+        if(this.state.undoTimeout){
+            clearTimeout(this.state.undoTimeout);
+        }
+
+        this.setState({
+            lastMarkedId: undefined,
+            undoTimeout: undefined
+        });
+    }
+    showUndoSuccessAlert(){
+        if(this.state.undoSuccessTimeout !== undefined){
+            clearTimeout(this.state.undoSuccessTimeout);
+        }
+
+        var timeout = setTimeout(this.dismissUndoSuccessAlert, timeoutMilliseconds);
+        this.setState({
+            showUndoSuccess: true,
+            undoSuccessTimeout: timeout,
+            lastMarkedId: undefined // don't let people accidentally undo twice
+        });
+    }
+    dismissUndoSuccessAlert(){
+        if(this.state.undoSuccessTimeout !== undefined){
+            clearTimeout(this.state.undoSuccessTimeout);
+        }
+
+        this.setState({
+            showUndoSuccess: false,
+            undoSuccessTimeout: undefined
+        });
     }
 
     fetchCurrentItems(){
@@ -71,7 +126,8 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
 
                 this.setState({
                     items: data.Items,
-                    dueDate: isNaN(due.getTime()) ? undefined : due
+                    dueDate: isNaN(due.getTime()) ? undefined : due,
+                    lastMarkedId: undefined
                 });
             }
         }).catch(err => {
@@ -89,7 +145,6 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
             return;
         }
 
-        const markItemUrl = "/mark-item";
         var url = this.props.global.baseUrl
             + ":" + this.props.global.port
             + markItemUrl;
@@ -107,11 +162,40 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
                 this.props.global.showErrorAlert("Error marking item.");
             } else {
                 // marked successfully, give option to undo
-                this.props.global.showUndoMarkAlert(itemId);
+                this.showUndoAlert(itemId);
             }
         }).catch(err => {
             console.log("Ya done ducked up", err);
             this.props.global.showErrorAlert("Error marking item.");
+        });
+    }
+    onUnMarkItem(e: any){
+        if(this.state.lastMarkedId === undefined){
+            // might just be a double click, don't show error
+            e.preventDefault();
+            return;
+        }
+
+        var url = this.props.global.baseUrl
+            + ":" + this.props.global.port
+            + markItemUrl;
+        let data = {
+            id: this.state.lastMarkedId,
+            action: "undo"
+        };
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify(data)
+        }).then(resp => {
+            if(!resp.ok){
+                console.log(`Error ${resp.status} undoing item ${this.state.lastMarkedId}: ${resp.statusText}`);
+                this.props.global.showErrorAlert("Error undoing item.");
+            } else {
+                this.showUndoSuccessAlert();
+            }
+        }).catch(err => {
+            console.log("Ya done ducked up", err);
+            this.props.global.showErrorAlert("Error undoing item.");
         });
     }
 
@@ -136,7 +220,6 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         }
         return status;
     }
-
     formatDueDate(due?: Date){
         if(due === undefined){
             return "";
@@ -191,9 +274,24 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
 
     render() {
         return (
-            <Container fluid className="current-items">
-                {this.renderItems()}
-            </Container>
+            <div>
+                <Container fluid className="current-items">
+                    {this.renderItems()}
+                </Container>
+                <div className="footer">
+                    <Alert variant="success" dismissible transition={false}
+                        show={this.state.lastMarkedId !== undefined}
+                        onClose={ this.dismissUndoAlert }>
+                        <span>You did it! &nbsp;</span>
+                        <Alert.Link onClick={ this.onUnMarkItem }>Undo</Alert.Link>
+                    </Alert>
+                    <Alert variant="success" dismissible transition={false}
+                        show={this.state.showUndoSuccess}
+                        onClose={ this.dismissUndoSuccessAlert }>
+                        <span>Success!</span>
+                    </Alert>
+                </div>
+            </div>
         );
     }
 }

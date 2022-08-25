@@ -19,7 +19,7 @@ interface AppState {
   undoTimeout?: NodeJS.Timeout;
 }
 
-const timeoutMilliseconds = 500000;
+const timeoutMilliseconds = 5000;
 
 class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps){
@@ -28,8 +28,6 @@ class App extends React.Component<AppProps, AppState> {
     this.onSelectedModeChange = this.onSelectedModeChange.bind(this);
     this.dismissErrorAlert = this.dismissErrorAlert.bind(this);
     this.showErrorAlert = this.showErrorAlert.bind(this);
-    this.dismissUndoMarkAlert = this.dismissUndoMarkAlert.bind(this);
-    this.showUndoMarkAlert = this.showUndoMarkAlert.bind(this);
   }
 
   dismissErrorAlert(){
@@ -52,28 +50,6 @@ class App extends React.Component<AppProps, AppState> {
           errorMsg: msg,
           errorTimeout: timeout
       });
-  }
-
-  dismissUndoMarkAlert(){
-    if(this.state.undoTimeout){
-      clearTimeout(this.state.undoTimeout);
-    }
-
-    this.setState({
-      lastMarkedId: undefined,
-      undoTimeout: undefined
-    });
-  }
-  showUndoMarkAlert(id: number){
-    if(this.state.undoTimeout){
-      clearTimeout(this.state.undoTimeout);
-    }
-
-    let timeout = setTimeout(this.dismissUndoMarkAlert, timeoutMilliseconds);
-    this.setState({
-      lastMarkedId: id,
-      undoTimeout: timeout
-    });
   }
 
   componentDidMount(){
@@ -121,8 +97,7 @@ class App extends React.Component<AppProps, AppState> {
         global: {
           baseUrl: this.props.baseUrl,
           port: this.props.port,
-          showErrorAlert: this.showErrorAlert,
-          showUndoMarkAlert: this.showUndoMarkAlert
+          showErrorAlert: this.showErrorAlert
         }
       } as GlobalProps;
       let currentItemsProps = {
@@ -138,24 +113,19 @@ class App extends React.Component<AppProps, AppState> {
       return (
         <div>
           <Navigation {...navigationProps} />
-          <Container fluid className="page-content">
+          <div className={ "content-container " + (this.state.errorMsg !== undefined ? "err" : "")}>
             {this.state.navigation.selectedMode === "Current" &&
               <CurrentItems {...currentItemsProps} />
             }
             {this.state.navigation.selectedMode === "History" &&
               <History {...historyProps } />
             }
-          </Container>
-          <div id="footer">
-            <Alert variant="danger" dismissible show={this.state.errorMsg !== undefined}
+          </div>
+          <div className="footer">
+            <Alert variant="danger" dismissible transition={false}
+                show={this.state.errorMsg !== undefined}
                 onClose={this.dismissErrorAlert}>
                 <span>{this.state.errorMsg}</span>
-            </Alert>
-            <Alert variant="success" dismissible show={this.state.lastMarkedId !== undefined}
-                onClose={ this.dismissUndoMarkAlert }>    
-                <span>Success!
-                    <Alert.Link last-id={this.state.lastMarkedId}>Undo</Alert.Link>
-                </span>
             </Alert>
           </div>
           <div id="footerSpacer"></div>

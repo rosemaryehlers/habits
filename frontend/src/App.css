@@ -13,30 +13,33 @@
   padding: 10px 0 10px 0;
 }
 
-.page-content .row {
+.content-container .row {
   border-bottom: 1px solid #f2f2f2;
   height: 42px;
 }
 
-.page-content .col.left {
+.content-container .col.left {
   display: flex;
   align-items: center;
 }
 
-.page-content .col.right {
+.content-container .col.right {
   display: flex;
   justify-content: right;
 }
 
-#footer {
+.footer {
   position: sticky;
   bottom: 0;
   left: 0;
   width: 100%;
   margin: 0;
 }
-#footer .alert {
+.footer .alert {
   margin: 0;
   text-align: center;
   --bs-alert-border-radius: 0;
+}
+.content-container.err .footer {
+  bottom: 58px; /* if both error and content alerts are showing, don't let content alert scroll behind error alert */
 }

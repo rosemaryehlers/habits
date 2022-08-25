@@ -4,6 +4,5 @@ export interface GlobalProps {
         baseUrl: string;
         port: number;
         showErrorAlert(msg: string) : any;
-        showUndoMarkAlert(id: number) : any;
     }
 }
