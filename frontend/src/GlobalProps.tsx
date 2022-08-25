@@ -4,5 +4,6 @@ export interface GlobalProps {
         baseUrl: string;
         port: number;
         showErrorAlert(msg: string) : any;
+        changeHeaderText(text?: JSX.Element) : any;
     }
 }

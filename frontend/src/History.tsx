@@ -46,8 +46,16 @@ class History extends React.Component<HistoryProps, HistoryState> {
         };
 
         this.onItemClick = this.onItemClick.bind(this);
+        this.clearItemId = this.clearItemId.bind(this);
     }
 
+    clearItemId(e: any){
+        console.log("Clearing item id");
+        this.setState({
+            itemId: undefined
+        });
+        this.props.global.changeHeaderText(undefined);
+    }
     onItemClick(e: any){
         let id = parseInt(e.currentTarget.value);
         if(isNaN(id)){
@@ -157,7 +165,9 @@ class History extends React.Component<HistoryProps, HistoryState> {
                 ))
             );
         } else {
-            return (<ItemHistory global={this.props.global} itemId={this.state.itemId} />);
+            return (<ItemHistory global={this.props.global} 
+                itemId={this.state.itemId} 
+                clearItemId={this.clearItemId} />);
         }
     }
 

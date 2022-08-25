@@ -17,6 +17,7 @@ interface AppState {
   errorTimeout?: NodeJS.Timeout;
   lastMarkedId?: number;
   undoTimeout?: NodeJS.Timeout;
+  headerText?: JSX.Element;
 }
 
 const timeoutMilliseconds = 5000;
@@ -28,6 +29,7 @@ class App extends React.Component<AppProps, AppState> {
     this.onSelectedModeChange = this.onSelectedModeChange.bind(this);
     this.dismissErrorAlert = this.dismissErrorAlert.bind(this);
     this.showErrorAlert = this.showErrorAlert.bind(this);
+    this.changeHeaderText = this.changeHeaderText.bind(this);
   }
 
   dismissErrorAlert(){
@@ -84,6 +86,15 @@ class App extends React.Component<AppProps, AppState> {
 
     let newNavObj = {...this.state.navigation};
     newNavObj.selectedMode = mode;
+    newNavObj.headerText = undefined;
+    this.setState({
+      navigation: newNavObj
+    });
+  }
+
+  changeHeaderText(text?: JSX.Element){
+    let newNavObj = {...this.state.navigation};
+    newNavObj.headerText = text;
     this.setState({
       navigation: newNavObj
     });
@@ -97,7 +108,8 @@ class App extends React.Component<AppProps, AppState> {
         global: {
           baseUrl: this.props.baseUrl,
           port: this.props.port,
-          showErrorAlert: this.showErrorAlert
+          showErrorAlert: this.showErrorAlert,
+          changeHeaderText: this.changeHeaderText
         }
       } as GlobalProps;
       let currentItemsProps = {

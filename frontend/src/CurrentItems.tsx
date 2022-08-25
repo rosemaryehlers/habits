@@ -202,9 +202,14 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
     componentDidMount() {
         this.fetchCurrentItems();
     }
-    componentDidUpdate(prevProps: CurrentItemsProps) {
+    componentDidUpdate(prevProps: CurrentItemsProps, prevState: CurrentItemsState) {
         if (this.props.selectedView !== prevProps.selectedView){
             this.fetchCurrentItems();
+        }
+
+        if(this.state.dueDate !== prevState.dueDate){
+            var due = this.formatDueDate(this.state.dueDate);
+            this.props.global.changeHeaderText(<span><b>Due:</b>&nbsp;{due}</span>);
         }
     }
 
@@ -244,11 +249,6 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
 
         return (
             <div>
-                <Row className="content-header">
-                    <Col>
-                        <span><b>Due: </b></span>{ this.formatDueDate(this.state.dueDate) }
-                    </Col>
-                </Row>
                 {
                     this.state.items.map(item => (
                         <Row>

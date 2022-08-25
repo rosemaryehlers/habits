@@ -1,9 +1,10 @@
 import React from 'react';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button, Alert } from 'react-bootstrap';
 import { GlobalProps } from './GlobalProps';
 
 export interface ItemHistoryProps extends GlobalProps {
     itemId: number;
+    clearItemId(e: any): any;
 }
 
 interface Entry {
@@ -68,6 +69,7 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
                 entries: data.entries,
                 itemMetadata: metadata
             });
+            this.props.global.changeHeaderText(this.renderHeaderText());
         }).catch(err => {
             console.log(`Error fetching history for item ${this.props.itemId}: ${err}`);
             this.props.global.showErrorAlert("Error fetching history for item.");
@@ -106,9 +108,16 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
         return;
     }
 
+    renderHeaderText(){
+        return (
+                <Button variant="outline-secondary" size="sm" onClick={this.props.clearItemId} >Go Back</Button>
+        );
+    }
+
     render() {
         return (
             <div className="item-history">
+                <div className="content-header">{this.state.itemMetadata !== undefined ? this.state.itemMetadata.name : ""}</div>
                 {
                     this.state.entries.map(entry => (
                         <Row>
@@ -121,9 +130,6 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
                         </Row>
                     ))
                 }
-                <Col className="content-header">
-                    <Button size="sm" variant="outline-secondary">Back</Button>
-                </Col>
             </div>
         );
     }
