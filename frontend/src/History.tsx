@@ -7,6 +7,7 @@ import Container from 'react-bootstrap/Container';
 import { GlobalProps } from './GlobalProps';
 import ItemHistory, { ItemHistoryProps } from './ItemHistory';
 import './History.css';
+import { Accordion } from 'react-bootstrap';
 
 export interface HistoryProps extends GlobalProps {
     selectedView?: string;
@@ -154,14 +155,17 @@ class History extends React.Component<HistoryProps, HistoryState> {
         if(this.state.itemId === undefined){
             return (
                 this.state.items.map(item => (
-                    <Row>
-                        <Col className="left">
-                            <Button onClick={ this.onItemClick } variant="link" key={item.id} value={item.id}>{item.name}</Button>
-                        </Col>
-                        <Col className="right">
-                            {this.renderItemSuccess(item)}
-                        </Col>
-                    </Row>
+                    <Accordion className="left row" flush>
+                        <Accordion.Item eventKey={item.id + ""}>
+                            <Accordion.Header>
+                                <Col className="left">{item.name}</Col>
+                                <Col className="right">{this.renderItemSuccess(item)}</Col>
+                            </Accordion.Header>
+                            <Accordion.Body>
+                                Loading...
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
                 ))
             );
         } else {

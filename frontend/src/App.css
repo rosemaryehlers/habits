@@ -43,3 +43,41 @@
 .content-container.err .footer {
   bottom: 58px; /* if both error and content alerts are showing, don't let content alert scroll behind error alert */
 }
+
+.accordion.left.row {
+  height: auto;
+}
+.accordion.left .accordion-button {
+  height: 42px;
+  padding: 0;
+}
+
+.accordion.left .accordion-button:not(.collapsed){
+  color: unset;
+  background-color: unset;
+  box-shadow: unset;
+  font-weight: bold;
+}
+
+.accordion.left .accordion-button::after {
+  all: unset;
+}
+.accordion.left .accordion-button::before {
+  flex-shrink: 0;
+  width: var(--bs-accordion-btn-icon-width);
+  height: var(--bs-accordion-btn-icon-width);
+  content: "";
+  background-image: var(--bs-accordion-btn-icon);
+  background-repeat: no-repeat;
+  background-size: var(--bs-accordion-btn-icon-width);
+  transition: var(--bs-accordion-btn-icon-transition);
+  margin-right: calc(var(--bs-gutter-x) * .5);
+}
+
+.accordion.left .accordion-button:not(.collapsed)::after {
+  all: unset;
+}
+.accordion.left .accordion-button:not(.collapsed)::before {
+  background-image: var(--bs-accordion-btn-active-icon);
+  transform: var(--bs-accordion-btn-icon-transform);
+}
