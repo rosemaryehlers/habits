@@ -4,7 +4,7 @@ import { GlobalProps } from './GlobalProps';
 
 export interface ItemHistoryProps extends GlobalProps {
     itemId: number;
-    clearItemId(e: any): any;
+    loaded: boolean;
 }
 
 interface Entry {
@@ -35,6 +35,10 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
 
 
     fetchItemHistory(){
+        if(!this.props.loaded){
+            return;
+        }
+
         if(this.props.itemId === undefined || isNaN(this.props.itemId)){
             this.props.global.showErrorAlert(`Unable to fetch item history, invalid id: ${this.props.itemId}`);
             return;
@@ -69,7 +73,6 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
                 entries: data.entries,
                 itemMetadata: metadata
             });
-            this.props.global.changeHeaderText(this.renderHeaderText());
         }).catch(err => {
             console.log(`Error fetching history for item ${this.props.itemId}: ${err}`);
             this.props.global.showErrorAlert("Error fetching history for item.");
@@ -80,7 +83,7 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
         this.fetchItemHistory();
     }
     componentDidUpdate(prevProps: ItemHistoryProps){
-        if(this.props.itemId !== prevProps.itemId){
+        if(prevProps.loaded != this.props.loaded){
             this.fetchItemHistory();
         }
     }
@@ -108,16 +111,14 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
         return;
     }
 
-    renderHeaderText(){
-        return (
-                <Button variant="outline-secondary" size="sm" onClick={this.props.clearItemId} >Go Back</Button>
-        );
-    }
-
     render() {
+        if(!this.props.loaded){
+            console.log(`Item history for ${this.props.itemId} not loaded`);
+            return (<span>Loading...</span>);
+        }
+
         return (
             <div className="item-history">
-                <div className="content-header">{this.state.itemMetadata !== undefined ? this.state.itemMetadata.name : ""}</div>
                 {
                     this.state.entries.map(entry => (
                         <Row>

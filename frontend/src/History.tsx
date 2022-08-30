@@ -31,7 +31,18 @@ interface Item {
 interface HistoryState {
     errorMsg?: string;
     items: Array<Item>;
-    itemId?: number;
+    loadedItemHistories: Array<number>;
+}
+
+
+interface ItemHistoryEntry {
+    dueDate: string;
+    count: number;
+}
+interface ItemHistoryMetadata {
+    name: string;
+    type: string;
+    goal?: number;
 }
 
 const weeks = 6;
@@ -43,38 +54,20 @@ class History extends React.Component<HistoryProps, HistoryState> {
 
         this.state = {
             items: [],
-            itemId: undefined
+            loadedItemHistories: []
         };
-
-        this.onItemClick = this.onItemClick.bind(this);
-        this.clearItemId = this.clearItemId.bind(this);
     }
 
-    clearItemId(e: any){
-        console.log("Clearing item id");
-        this.setState({
-            itemId: undefined
-        });
-        this.props.global.changeHeaderText(undefined);
-    }
-    onItemClick(e: any){
-        let id = parseInt(e.currentTarget.value);
-        if(isNaN(id)){
-            console.log(`Invalid item id on item click: ${e}`);
-            this.setState({
-                errorMsg: "Invalid item id."
-            });
-            e.preventDefault();
+    onItemHistoryClick(e: any, itemId: number) {
+        if(this.state.loadedItemHistories.includes(itemId)){
+            e.preventDefault(); // history already loaded, do nothing
             return;
         }
 
-        if(id === this.state.itemId){
-            e.preventDefault();
-            return;
-        }
-
+        let newHistories = Object.assign([], this.state.loadedItemHistories);
+        newHistories.push(itemId);
         this.setState({
-            itemId: id
+            loadedItemHistories: newHistories
         });
     }
 
@@ -102,8 +95,7 @@ class History extends React.Component<HistoryProps, HistoryState> {
             if(data !== undefined){
                 this.setState({
                     items: data.items,
-                    errorMsg: undefined,
-                    itemId: undefined
+                    errorMsg: undefined
                 });
             }
         }).catch(err => {
@@ -150,39 +142,27 @@ class History extends React.Component<HistoryProps, HistoryState> {
 
         return ("Unknown item type.");
     }
-
-    renderContent(){
-        if(this.state.itemId === undefined){
-            return (
-                this.state.items.map(item => (
-                    <Accordion className="left row" flush>
-                        <Accordion.Item eventKey={item.id + ""}>
-                            <Accordion.Header>
-                                <Col className="left">{item.name}</Col>
-                                <Col className="right">{this.renderItemSuccess(item)}</Col>
-                            </Accordion.Header>
-                            <Accordion.Body>
-                                Loading...
-                            </Accordion.Body>
-                        </Accordion.Item>
-                    </Accordion>
-                ))
-            );
-        } else {
-            return (<ItemHistory global={this.props.global} 
-                itemId={this.state.itemId} 
-                clearItemId={this.clearItemId} />);
-        }
-    }
+    renderItemHistory(){}
 
     render(){
-
         return (
             <Container fluid className="history page-content">
                 <Row hidden={this.state.items !== undefined && this.state.items.length > 0}>
                     No items found!
                 </Row>
-                { this.renderContent() }
+                <Accordion className="left row" flush>
+                { this.state.items.map(item => (
+                    <Accordion.Item eventKey={item.id + ""}>
+                        <Accordion.Header onClick={ (e) => { this.onItemHistoryClick(e, item.id); } }>
+                            <Col className="left">{item.name}</Col>
+                            <Col className="right">{this.renderItemSuccess(item)}</Col>
+                        </Accordion.Header>
+                        <Accordion.Body id={item.id + ""}>
+                            <ItemHistory loaded={ this.state.loadedItemHistories.includes(item.id) } itemId={item.id} global={this.props.global} />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                )) }
+                </Accordion>
             </Container>
         );
     }
