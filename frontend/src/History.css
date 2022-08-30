@@ -11,3 +11,15 @@ span.success {
 span.fail {
     color: #dc3545;
 }
+
+.item-history .row {
+    border: none;
+}
+.history .accordion-body {
+    padding: 0;
+    padding-left: calc(var(--bs-gutter-x) * .5 + var(--bs-accordion-btn-icon-width));
+}
+.history .col {
+    display: flex;
+    align-items: center;
+}

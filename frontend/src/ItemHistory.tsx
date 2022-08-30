@@ -117,6 +117,10 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
             return (<span>Loading...</span>);
         }
 
+        if(this.state.entries.length === 0){
+            return (<Row><Col>No entries.</Col></Row>);
+        }
+
         return (
             <div className="item-history">
                 {

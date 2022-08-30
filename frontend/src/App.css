@@ -44,6 +44,11 @@
   bottom: 58px; /* if both error and content alerts are showing, don't let content alert scroll behind error alert */
 }
 
+.accordion-button:focus {
+  border: none;
+  box-shadow: none;
+}
+
 .accordion.left.row {
   height: auto;
 }
