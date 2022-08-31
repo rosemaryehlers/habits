@@ -142,7 +142,12 @@ class History extends React.Component<HistoryProps, HistoryState> {
 
         return ("Unknown item type.");
     }
-    renderItemHistory(){}
+
+    renderItemHistory(item: Item){
+        if(this.state.loadedItemHistories.includes(item.id)){
+            return <ItemHistory itemId={item.id} global={this.props.global} />;
+        }
+    }
 
     render(){
         return (
@@ -152,13 +157,13 @@ class History extends React.Component<HistoryProps, HistoryState> {
                 </Row>
                 <Accordion className="left row" flush>
                 { this.state.items.map(item => (
-                    <Accordion.Item eventKey={item.id + ""}>
+                    <Accordion.Item eventKey={item.id + ""} key={item.id}>
                         <Accordion.Header onClick={ (e) => { this.onItemHistoryClick(e, item.id); } }>
                             <Col className="left">{item.name}</Col>
                             <Col className="right">{this.renderItemSuccess(item)}</Col>
                         </Accordion.Header>
                         <Accordion.Body id={item.id + ""}>
-                            <ItemHistory loaded={ this.state.loadedItemHistories.includes(item.id) } itemId={item.id} global={this.props.global} />
+                            { this.renderItemHistory(item) }
                         </Accordion.Body>
                     </Accordion.Item>
                 )) }

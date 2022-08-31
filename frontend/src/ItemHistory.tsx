@@ -1,10 +1,9 @@
-import React from 'react';
-import { Row, Col, Button, Alert } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Row, Col } from 'react-bootstrap';
 import { GlobalProps } from './GlobalProps';
 
 export interface ItemHistoryProps extends GlobalProps {
     itemId: number;
-    loaded: boolean;
 }
 
 interface Entry {
@@ -19,45 +18,37 @@ interface ItemMetadata {
 interface ItemHistoryState {
     entries: Array<Entry>;
     itemMetadata?: ItemMetadata;
+    loaded: boolean;
 }
 
 const historyPath = "/history";
 
-class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
-    constructor(props: ItemHistoryProps){
-        super(props);
+function ItemHistory(props: ItemHistoryProps) {
+    // put everything in one object because we want it to be updated together
+    // we don't want a call to render when we've only updated the entries but not the item metadata, etc
+    const [state, setState] = useState<ItemHistoryState>();
 
-        this.state = {
-            entries: [],
-            itemMetadata: undefined,
-        };
-    }
-
-
-    fetchItemHistory(){
-        if(!this.props.loaded){
+    // fetch item history and update state
+    useEffect(() => {
+        if(props.itemId === undefined){
             return;
         }
 
-        if(this.props.itemId === undefined || isNaN(this.props.itemId)){
-            this.props.global.showErrorAlert(`Unable to fetch item history, invalid id: ${this.props.itemId}`);
-            return;
-        }
-
-        var url = this.props.global.baseUrl + 
-            ":" + this.props.global.port + historyPath + 
-            "?item=" + this.props.itemId;
+        var url = props.global.baseUrl + 
+            ":" + props.global.port + historyPath + 
+            "?item=" + props.itemId;
 
         fetch(url, { method: "GET" }).then(resp => {
             if(!resp.ok){
-                console.log(`Error ${resp.status} fetching history for item ${this.props.itemId}: ${resp.statusText}`);
+                console.log(`Error ${resp.status} fetching history for item ${props.itemId}: ${resp.statusText}`);
                 return undefined;
             }
 
             return resp.json();
         }).then(data => {
             if(data === undefined){
-                this.props.global.showErrorAlert("Error fetching history for item.");
+                props.global.showErrorAlert("Error fetching history for item.");
+                setState(undefined);
                 return;
             }
 
@@ -69,75 +60,67 @@ class ItemHistory extends React.Component<ItemHistoryProps, ItemHistoryState> {
                 metadata.goal = data.goal;
             }
 
-            this.setState({
+            let newState = {
                 entries: data.entries,
-                itemMetadata: metadata
-            });
+                itemMetadata: metadata,
+                loaded: true
+            } as ItemHistoryState;
+
+            setState(newState);
         }).catch(err => {
-            console.log(`Error fetching history for item ${this.props.itemId}: ${err}`);
-            this.props.global.showErrorAlert("Error fetching history for item.");
+            console.log(`Error fetching history for item ${props.itemId}: ${err}`);
+            setState(undefined);
+            props.global.showErrorAlert("Error fetching history for item.");
         });
+    }, [props.itemId]);
+
+    if(props.itemId === undefined || state === undefined || !state.loaded){
+        return (<div>Loading...</div>);
     }
 
-    componentDidMount(){
-        this.fetchItemHistory();
-    }
-    componentDidUpdate(prevProps: ItemHistoryProps){
-        if(prevProps.loaded != this.props.loaded){
-            this.fetchItemHistory();
-        }
+    if(state.entries.length === 0){
+        return (<Row><Col>No entries.</Col></Row>);
     }
 
-    renderEntrySuccess(entry: Entry){
-        if(this.state.itemMetadata === undefined){
-            this.props.global.showErrorAlert("No item metadata!");
+    function renderEntrySuccess(entry: Entry){
+        if(state === undefined || state.itemMetadata === undefined){
+            props.global.showErrorAlert("No item metadata!");
             return;
         }
 
-        if(this.state.itemMetadata.type === "infinite"){
+        if(state.itemMetadata.type === "infinite"){
             return (<span>{ entry.count }</span>);
         }
-        else if(this.state.itemMetadata.type === "finite"){
-            if(this.state.itemMetadata.goal === undefined){
-                this.props.global.showErrorAlert("No goal for finite item type.");
+        else if(state.itemMetadata.type === "finite"){
+            if(state.itemMetadata.goal === undefined){
+                props.global.showErrorAlert("No goal for finite item type.");
                 return;
             }
 
-            let color = entry.count >= this.state.itemMetadata.goal ? "success" : "fail";
-            return (<span className={color}>{entry.count} / {this.state.itemMetadata.goal}</span>);
+            let color = entry.count >= state.itemMetadata.goal ? "success" : "fail";
+            return (<span className={color}>{entry.count} / {state.itemMetadata.goal}</span>);
         }
 
-        this.props.global.showErrorAlert("Unknown item type " + this.state.itemMetadata.type);
+        props.global.showErrorAlert("Unknown item type " + state.itemMetadata.type);
         return;
     }
 
-    render() {
-        if(!this.props.loaded){
-            console.log(`Item history for ${this.props.itemId} not loaded`);
-            return (<span>Loading...</span>);
-        }
-
-        if(this.state.entries.length === 0){
-            return (<Row><Col>No entries.</Col></Row>);
-        }
-
-        return (
-            <div className="item-history">
-                {
-                    this.state.entries.map(entry => (
-                        <Row>
-                            <Col className="left">
-                                { (new Date(entry.dueDate)).toLocaleDateString("en-us", {month: '2-digit', day: '2-digit'}) }
-                            </Col>
-                            <Col className="right">
-                                { this.renderEntrySuccess(entry) }
-                            </Col>
-                        </Row>
-                    ))
-                }
-            </div>
-        );
-    }
+    return (
+        <div className="item-history">
+            {
+                state.entries.map(entry => (
+                    <Row key={entry.dueDate}>
+                        <Col className="left">
+                            { (new Date(entry.dueDate)).toLocaleDateString("en-us", {month: '2-digit', day: '2-digit'}) }
+                        </Col>
+                        <Col className="right">
+                            { renderEntrySuccess(entry) }
+                        </Col>
+                    </Row>
+                ))
+            }
+        </div>
+    );
 }
 
 export default ItemHistory;
