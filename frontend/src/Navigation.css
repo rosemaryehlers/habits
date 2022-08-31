@@ -31,3 +31,10 @@
 #weeksInput .form-text {
     color: #000000;
 }
+
+.settings-modal button {
+    margin-bottom: var(--bs-modal-padding);
+}
+.settings-modal button.close {
+    margin-bottom: 0;
+}

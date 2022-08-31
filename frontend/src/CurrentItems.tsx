@@ -97,6 +97,7 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
     }
 
     fetchCurrentItems(){
+        console.log("fetch current items");
         if(this.props.selectedView === undefined || this.props.selectedView === null || this.props.selectedView === ""){
             return; 
         }
@@ -217,11 +218,11 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
         var status = [];
         if (item.type === "finite" && item.status.goal !== undefined) {
             for(var i = 0; i < item.status.goal - item.status.count; i++){
-                status.push(<img src={iconcheck} className="svg-grey-light" alt="incomplete" />);
+                status.push(<img src={iconcheck} className="svg-grey-light" alt="incomplete" key={item.id + "-todo-" + i} />);
             }
         }
         for(i = 0; i < item.status.count; i++){
-            status.push(<img src={iconcheck} className="svg-green" alt="complete" />);
+            status.push(<img src={iconcheck} className="svg-green" alt="complete" key={item.id + "-done-" + i}/>);
         }
         return status;
     }
@@ -251,7 +252,7 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
             <div>
                 {
                     this.state.items.map(item => (
-                        <Row>
+                        <Row key={item.id}>
                             <Col className="left">
                                 <span>{item.name}</span>
                             </Col>
@@ -261,7 +262,7 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
                                         {this.itemStatus(item)}
                                     </div>
                                     <Button onClick={this.onMarkItem} id={item.id + ""} variant="primary" size="sm" disabled={(item.type !== "infinite" && item.status.goal !== undefined && item.status.goal === item.status.count)}>
-                                        <img src={iconcheck} className="svg-white" alt="complete task" />
+                                        <img src={iconcheck} className="svg-white" alt="complete task" key={item.id + "-complete-task"} />
                                     </Button>{' '}
                                 </Stack>
                             </Col>

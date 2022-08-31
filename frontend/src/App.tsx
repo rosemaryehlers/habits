@@ -5,19 +5,19 @@ import Navigation, { NavigationProps, CombinedNavigationProps } from './Navigati
 import './App.css';
 import { GlobalProps } from './GlobalProps';
 import History, { HistoryProps } from './History';
-import { Container } from 'react-bootstrap';
 
 interface AppProps {
   baseUrl: string,
   port: number;
 }
 interface AppState {
-  navigation: NavigationProps;
+  navigation?: NavigationProps;
   errorMsg?: string;
   errorTimeout?: NodeJS.Timeout;
   lastMarkedId?: number;
   undoTimeout?: NodeJS.Timeout;
   headerText?: JSX.Element;
+  appInitialized: boolean;
 }
 
 const timeoutMilliseconds = 5000;
@@ -30,6 +30,10 @@ class App extends React.Component<AppProps, AppState> {
     this.dismissErrorAlert = this.dismissErrorAlert.bind(this);
     this.showErrorAlert = this.showErrorAlert.bind(this);
     this.changeHeaderText = this.changeHeaderText.bind(this);
+
+    this.state = {
+      appInitialized: false
+    };
   }
 
   dismissErrorAlert(){
@@ -54,21 +58,8 @@ class App extends React.Component<AppProps, AppState> {
       });
   }
 
-  componentDidMount(){
-    this.setState({
-      navigation: {
-        selectedView: "Common", // eventually switch these to api call
-        views: ["Common", "Bathroom", "Empty", "Error"],
-        onSelectedViewChange: this.onSelectedViewChange,
-        selectedMode: "Current",
-        modes: ["Current", "History"],
-        onSelectedModeChange: this.onSelectedModeChange,
-      }
-    });
-  }
-
   onSelectedViewChange(view: string) {
-    if(this.state.navigation.selectedView === view){
+    if(this.state.navigation === undefined || this.state.navigation.selectedView === view){
       return;
     }
 
@@ -80,19 +71,30 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   onSelectedModeChange(mode: string){
-    if(this.state.navigation.selectedMode === mode){
+    if(this.state.navigation === undefined || this.state.navigation.selectedMode === mode){
       return;
     }
 
     let newNavObj = {...this.state.navigation};
     newNavObj.selectedMode = mode;
     newNavObj.headerText = undefined;
+
+    if(mode === "edit"){
+      newNavObj.selectedView = undefined;
+    } else if (newNavObj.selectedView === undefined){
+      newNavObj.selectedView = newNavObj.defaultView;
+    }
+
     this.setState({
       navigation: newNavObj
     });
   }
 
   changeHeaderText(text?: JSX.Element){
+    if(this.state.navigation === undefined){
+      return;
+    }
+
     let newNavObj = {...this.state.navigation};
     newNavObj.headerText = text;
     this.setState({
@@ -100,10 +102,60 @@ class App extends React.Component<AppProps, AppState> {
     });
   }
 
+  fetchViews(): any {
+    const viewsPath = "/views";
+    let url = this.props.baseUrl + ":" + this.props.port + viewsPath;
+
+    fetch(url, { "method": "GET" }).then( resp => {
+      if(!resp.ok){
+        console.log(`Error ${resp.status} fetching views: ${resp.statusText}`);
+        this.showErrorAlert("Error fetching views.");
+        return;
+      }
+
+      return resp.json();
+    }).then(data => {
+      console.log("fetch views data", data);
+      if(data === undefined){
+        return;
+      }
+
+      let navObj = {
+        onSelectedModeChange: this.onSelectedModeChange,
+        onSelectedViewChange: this.onSelectedViewChange,
+        selectedMode: "Current",
+        modes: ["Current", "History"],
+        views: []
+      } as NavigationProps;
+  
+      if(data !== undefined) {
+        navObj.views = data.views;
+        navObj.selectedView = data.defaultView;
+        navObj.defaultView = data.defaultView;
+      }
+  
+      this.setState({
+        navigation: navObj,
+        appInitialized: true
+      });
+    }).catch(err => {
+      console.log(`Error fetching views: ${err}`);
+      this.showErrorAlert("Error fetching views.");
+    });
+
+    console.log("foo");
+  }
+
+  componentDidMount(){
+    console.log("app did mount", this.state.appInitialized);
+    this.fetchViews();
+  }
+
   render(){
-    if(this.state === undefined || this.state === null){
+    if(this.state === undefined || !this.state.appInitialized || this.state.navigation === undefined){
       return (<div>Loading...</div>);
     } else {
+      console.log("rendering??");
       let globalProps = {
         global: {
           baseUrl: this.props.baseUrl,
