@@ -97,7 +97,6 @@ class CurrentItems extends React.Component<CurrentItemsProps, CurrentItemsState>
     }
 
     fetchCurrentItems(){
-        console.log("fetch current items");
         if(this.props.selectedView === undefined || this.props.selectedView === null || this.props.selectedView === ""){
             return; 
         }

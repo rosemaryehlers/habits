@@ -34,7 +34,6 @@ function History(props: HistoryProps){
 
     // fetch view history
     useEffect(() => {
-        console.log("History useEffect, " + props.selectedView);
         if(props.selectedView === undefined){
             return;
         }
@@ -97,12 +96,6 @@ function History(props: HistoryProps){
         return ("Unknown item type.");
     }
 
-    function renderItemHistory(item: Item){
-        if(loadedHistories.includes(item.id)){
-            return <ItemHistory itemId={item.id} global={props.global} />;
-        }
-    }
-
     if(items.length === 0){
         return <Row>No items found!</Row>
     }
@@ -117,7 +110,9 @@ function History(props: HistoryProps){
                         <Col className="right">{ renderItemSuccess(item) }</Col>
                     </Accordion.Header>
                     <Accordion.Body id={item.id + ""}>
-                        { renderItemHistory(item) }
+                        { loadedHistories.includes(item.id) &&
+                            <ItemHistory itemId={item.id} global={props.global} />
+                        }
                     </Accordion.Body>
                 </Accordion.Item>
             )) }
