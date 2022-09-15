@@ -10,9 +10,6 @@ interface AppProps {
   baseUrl: string,
   port: number;
 }
-interface AppState {
-  navigation?: NavigationProps;
-}
 interface Error {
   msg: string,
   timeout: NodeJS.Timeout
@@ -22,13 +19,12 @@ const timeoutMilliseconds = 5000;
 
 function App(props: AppProps){
     const [error, setError] = useState<Error>();
-    const [navigation, setNavigation] = useState<NavigationProps>({
-      views: [],
-      modes: ["Current", "History"],
-      selectedMode: "Current",
-      onSelectedModeChange: onSelectedModeChange,
-      onSelectedViewChange: onSelectedViewChange
-    });
+    const [views, setViews] = useState<Array<string>>([]);
+    const modes = ["Current", "History"];
+    const [selectedMode, setSelectedMode] = useState("Current");
+    const [selectedView, setSelectedView] = useState<string | undefined>();
+    const [defaultView, setDefaultView] = useState<string | undefined>();
+    const [headerText, setHeaderText] = useState<JSX.Element | undefined>();
 
     // initialize app
     useEffect(() => {
@@ -49,16 +45,21 @@ function App(props: AppProps){
               return;
             }
 
-            let newNavObj = {...navigation};
-            newNavObj.views = data.views;
-            newNavObj.selectedView = data.defaultView;
-            newNavObj.defaultView = data.defaultView;
-            setNavigation(newNavObj);
+            setViews(data.views);
+            setDefaultView(data.defaultView);
+            setSelectedView(data.defaultView);
         }).catch(err => {
             console.log(`Error fetching views: ${err}`);
             showErrorAlert("Error fetching views.");
         });
     }, [props.baseUrl, props.port]);
+
+    function onViewChange(newView: string) {
+      setSelectedView(newView);
+    }
+    function onModeChange(newMode: string) {
+      setSelectedMode(newMode);
+    }
 
     function dismissErrorAlert(){
         if(error !== undefined && error.timeout !== undefined){
@@ -78,72 +79,46 @@ function App(props: AppProps){
           timeout: timeout
         });
     }
-    function onSelectedViewChange(view: string) {
-      if(navigation.selectedView === view){
-        return;
-      }
-  
-      let newNavObj = {...navigation};
-      console.log("onSelectedViewChange", navigation, newNavObj);
-      newNavObj.selectedView = view;
-      setNavigation(newNavObj);
-    }
-    function onSelectedModeChange(mode: string){
-      if(navigation.selectedMode === mode){
-        return;
-      }
-  
-      let newNavObj = {...navigation};
-      newNavObj.selectedMode = mode;
-      newNavObj.headerText = undefined;
-  
-      if(mode === "edit"){
-        newNavObj.selectedView = undefined;
-      } else if (newNavObj.selectedView === undefined){
-        newNavObj.selectedView = newNavObj.defaultView;
-      }
-  
-      setNavigation(newNavObj);
-    }
-    function changeHeaderText(text?: JSX.Element){
-      if(navigation.headerText === text){
-        return;
-      }
-  
-      let newNavObj = {...navigation};
-      newNavObj.headerText = text;
-      setNavigation(newNavObj);
-    }
 
     let globalProps = {
       global: {
         baseUrl: props.baseUrl,
         port: props.port,
         showErrorAlert: showErrorAlert,
-        changeHeaderText: changeHeaderText
+        changeHeaderText: setHeaderText
       }
     } as GlobalProps;
     let currentItemsProps = {
       global: globalProps.global,
-      selectedView: navigation.selectedView
+      selectedView: selectedView
     } as CurrentItemsProps;
-    let navigationProps = {...navigation, global: globalProps.global} as CombinedNavigationProps;
+    let navigationProps = {
+      views: views,
+      defaultView: defaultView,
+      selectedView: selectedView,
+      onSelectedViewChange: onViewChange,
+      modes: modes,
+      selectedMode: selectedMode,
+      onSelectedModeChange: onModeChange,
+      headerText: headerText,
+      global: globalProps.global
+    } as CombinedNavigationProps;
     let historyProps = {
       global: globalProps.global,
-      selectedView: navigation.selectedView
+      selectedView: selectedView
     } as HistoryProps;
 
     return (
         <div>
             <Navigation {...navigationProps} />
             <div className={ "content-container " + (error !== undefined ? "err" : "")}>
-                { navigation.selectedMode === "Current" &&
+                { selectedMode === "Current" &&
                   <CurrentItems {...currentItemsProps} />
                 }
-                { navigation.selectedMode === "History" &&
+                { selectedMode === "History" &&
                   <History {...historyProps } />
                 }
-                { navigation.selectedMode === "Edit" &&
+                { selectedMode === "Edit" &&
                   <div>Edit mode!</div>
                 }
             </div>

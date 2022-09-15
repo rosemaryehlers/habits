@@ -10,7 +10,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App baseUrl="http://localhost" port={61756} />
+    <App baseUrl="http://localhost" port={61396} />
   </React.StrictMode>
 );
 

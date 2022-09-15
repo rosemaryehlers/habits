@@ -4,6 +4,6 @@ export interface GlobalProps {
         baseUrl: string;
         port: number;
         showErrorAlert(msg: string) : any;
-        changeHeaderText(text?: JSX.Element) : any;
+        changeHeaderText: React.Dispatch<React.SetStateAction<JSX.Element | undefined>>;
     }
 }
