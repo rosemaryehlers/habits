@@ -28,7 +28,6 @@ function App(props: AppProps){
 
     // initialize app
     useEffect(() => {
-        console.log("App useEffect");
         const viewsPath = "/views";
         let url = props.baseUrl + ":" + props.port + viewsPath;
 
