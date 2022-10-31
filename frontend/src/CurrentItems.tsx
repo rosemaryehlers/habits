@@ -3,6 +3,7 @@ import { Alert, Button, Col, Container, Row, Stack } from 'react-bootstrap';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import { GlobalProps } from './GlobalProps';
+import AppNavigation from './AppNavigation';
 
 interface CurrentItemStatus {
     goal?: number;
@@ -239,9 +240,11 @@ function CurrentItems(props: CurrentItemsProps) {
         );
     }
 
+    console.log("1", props);
 
     return (
         <div>
+            <AppNavigation {...props} />
             <Container fluid className="current-items">
                 {renderItems()}
             </Container>

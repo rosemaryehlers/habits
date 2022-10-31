@@ -111,7 +111,7 @@ function History(props: HistoryProps){
                     </Accordion.Header>
                     <Accordion.Body id={item.id + ""}>
                         { loadedHistories.includes(item.id) &&
-                            <ItemHistory itemId={item.id} global={props.global} />
+                            <ItemHistory itemId={item.id} {...props} />
                         }
                     </Accordion.Body>
                 </Accordion.Item>

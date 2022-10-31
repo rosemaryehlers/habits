@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-bootstrap';
 import CurrentItems, { CurrentItemsProps } from './CurrentItems';
-import Navigation, { NavigationProps, CombinedNavigationProps } from './Navigation';
 import './App.css';
 import { GlobalProps } from './GlobalProps';
 import History, { HistoryProps } from './History';
@@ -83,33 +82,34 @@ function App(props: AppProps){
       global: {
         baseUrl: props.baseUrl,
         port: props.port,
+        views: views,
+        modes: modes,
         showErrorAlert: showErrorAlert,
         changeHeaderText: setHeaderText
+      },
+      appNav: {
+        defaultView: defaultView,
+        selectedView: selectedView,
+        onSelectedViewChange: onViewChange,
+        selectedMode: selectedMode,
+        onSelectedModeChange: onModeChange,
+        headerText: headerText
       }
     } as GlobalProps;
     let currentItemsProps = {
+      appNav: globalProps.appNav,
       global: globalProps.global,
       selectedView: selectedView
     } as CurrentItemsProps;
-    let navigationProps = {
-      views: views,
-      defaultView: defaultView,
-      selectedView: selectedView,
-      onSelectedViewChange: onViewChange,
-      modes: modes,
-      selectedMode: selectedMode,
-      onSelectedModeChange: onModeChange,
-      headerText: headerText,
-      global: globalProps.global
-    } as CombinedNavigationProps;
     let historyProps = {
       global: globalProps.global,
       selectedView: selectedView
     } as HistoryProps;
 
+    console.log("2", currentItemsProps);
+
     return (
         <div>
-            <Navigation {...navigationProps} />
             <div className={ "content-container " + (error !== undefined ? "err" : "")}>
                 { selectedMode === "Current" &&
                   <CurrentItems {...currentItemsProps} />
