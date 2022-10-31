@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Alert } from 'react-bootstrap';
+import { Alert, Container } from 'react-bootstrap';
 import CurrentItems, { CurrentItemsProps } from './CurrentItems';
 import './App.css';
 import { GlobalProps } from './GlobalProps';
 import History, { HistoryProps } from './History';
+import EditViews from './EditViews';
+import { AppNavigationProps } from './AppNavigation';
 
 interface AppProps {
   baseUrl: string,
@@ -56,6 +58,7 @@ function App(props: AppProps){
       setSelectedView(newView);
     }
     function onModeChange(newMode: string) {
+      console.log("App.tsx onModeChange");
       setSelectedMode(newMode);
     }
 
@@ -85,28 +88,27 @@ function App(props: AppProps){
         views: views,
         modes: modes,
         showErrorAlert: showErrorAlert,
-        changeHeaderText: setHeaderText
-      },
-      appNav: {
-        defaultView: defaultView,
-        selectedView: selectedView,
-        onSelectedViewChange: onViewChange,
-        selectedMode: selectedMode,
         onSelectedModeChange: onModeChange,
-        headerText: headerText
+        changeHeaderText: setHeaderText
       }
     } as GlobalProps;
+    let appNavProps = {
+      defaultView: defaultView,
+      selectedView: selectedView,
+      onSelectedViewChange: onViewChange,
+      selectedMode: selectedMode,
+      headerText: headerText
+    } as AppNavigationProps;
     let currentItemsProps = {
-      appNav: globalProps.appNav,
-      global: globalProps.global,
+      ...globalProps,
+      ...appNavProps,
       selectedView: selectedView
     } as CurrentItemsProps;
     let historyProps = {
-      global: globalProps.global,
+      ...globalProps,
+      ...appNavProps,
       selectedView: selectedView
     } as HistoryProps;
-
-    console.log("2", currentItemsProps);
 
     return (
         <div>
@@ -118,7 +120,7 @@ function App(props: AppProps){
                   <History {...historyProps } />
                 }
                 { selectedMode === "Edit" &&
-                  <div>Edit mode!</div>
+                  <EditViews {...globalProps} />
                 }
             </div>
             <div className="footer">

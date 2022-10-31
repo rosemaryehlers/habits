@@ -18,6 +18,11 @@
     justify-content: right;
 }
 
+.content-container .navigation .row {
+    border:none;
+    height: inherit;
+}
+
 .navigation .dropdown {
     padding-right: 10px;
 }

@@ -3,7 +3,7 @@ import { Alert, Button, Col, Container, Row, Stack } from 'react-bootstrap';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import { GlobalProps } from './GlobalProps';
-import AppNavigation from './AppNavigation';
+import AppNavigation, { AppNavigationProps } from './AppNavigation';
 
 interface CurrentItemStatus {
     goal?: number;
@@ -15,7 +15,7 @@ interface CurrentItem {
     type: string;
     status: CurrentItemStatus;
 }
-export interface CurrentItemsProps extends GlobalProps {
+export interface CurrentItemsProps extends AppNavigationProps, GlobalProps {
     selectedView?: string;
 }
 
@@ -239,8 +239,6 @@ function CurrentItems(props: CurrentItemsProps) {
             </div>
         );
     }
-
-    console.log("1", props);
 
     return (
         <div>

@@ -6,8 +6,9 @@ import { GlobalProps } from './GlobalProps';
 import ItemHistory, { ItemHistoryProps } from './ItemHistory';
 import './History.css';
 import { Accordion } from 'react-bootstrap';
+import AppNavigation, { AppNavigationProps } from './AppNavigation';
 
-export interface HistoryProps extends GlobalProps {
+export interface HistoryProps extends AppNavigationProps, GlobalProps {
     selectedView?: string;
 }
 
@@ -101,23 +102,26 @@ function History(props: HistoryProps){
     }
 
     return (
-        <Container fluid className="history page-content">
-            <Accordion className="left row" flush>
-            { items.map(item => (
-                <Accordion.Item eventKey={item.id + ""} key={item.id}>
-                    <Accordion.Header onClick={ (e) => { onItemHistoryClick(e, item.id); } }>
-                        <Col className="left">{item.name}</Col>
-                        <Col className="right">{ renderItemSuccess(item) }</Col>
-                    </Accordion.Header>
-                    <Accordion.Body id={item.id + ""}>
-                        { loadedHistories.includes(item.id) &&
-                            <ItemHistory itemId={item.id} {...props} />
-                        }
-                    </Accordion.Body>
-                </Accordion.Item>
-            )) }
-            </Accordion>
-        </Container>
+        <div>
+            <AppNavigation {...props} />
+            <Container fluid className="history page-content">
+                <Accordion className="left row" flush>
+                { items.map(item => (
+                    <Accordion.Item eventKey={item.id + ""} key={item.id}>
+                        <Accordion.Header onClick={ (e) => { onItemHistoryClick(e, item.id); } }>
+                            <Col className="left">{item.name}</Col>
+                            <Col className="right">{ renderItemSuccess(item) }</Col>
+                        </Accordion.Header>
+                        <Accordion.Body id={item.id + ""}>
+                            { loadedHistories.includes(item.id) &&
+                                <ItemHistory itemId={item.id} {...props} />
+                            }
+                        </Accordion.Body>
+                    </Accordion.Item>
+                )) }
+                </Accordion>
+            </Container>
+        </div>
     );
 
 }
