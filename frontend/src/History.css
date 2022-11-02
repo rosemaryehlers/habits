@@ -13,7 +13,7 @@ span.fail {
 }
 
 .item-history .row {
-    border: none;
+    height: 42px;
 }
 .history .accordion-body {
     padding: 0;

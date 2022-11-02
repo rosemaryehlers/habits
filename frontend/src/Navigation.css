@@ -18,7 +18,7 @@
     justify-content: right;
 }
 
-.content-container .navigation .row {
+.content-container .navigation .row, form .row {
     border:none;
     height: inherit;
 }

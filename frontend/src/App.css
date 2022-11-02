@@ -13,11 +13,6 @@
   padding: 10px 0 10px 0;
 }
 
-.content-container .row {
-  border-bottom: 1px solid #f2f2f2;
-  height: 42px;
-}
-
 .content-container .col.left {
   display: flex;
   align-items: center;
