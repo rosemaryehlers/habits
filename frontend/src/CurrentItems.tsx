@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Button, Col, Container, Row, Stack } from 'react-bootstrap';
+import { Alert, Button, Container, Stack, Table } from 'react-bootstrap';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import { GlobalProps } from './GlobalProps';
@@ -216,14 +216,13 @@ function CurrentItems(props: CurrentItemsProps) {
         }
 
         return (
-            <div>
+            <Table>
+                <tbody>
                 {
                     items.map(item => (
-                        <Row key={item.id}>
-                            <Col className="left">
-                                <span>{item.name}</span>
-                            </Col>
-                            <Col className="right">
+                        <tr>
+                            <td className="left">{item.name}</td>
+                            <td className="right">
                                 <Stack direction="horizontal" gap={1}>
                                     <div className="status">
                                         {itemStatus(item)}
@@ -232,11 +231,12 @@ function CurrentItems(props: CurrentItemsProps) {
                                         <img src={iconcheck} className="svg-white" alt="complete task" key={item.id + "-complete-task"} />
                                     </Button>{' '}
                                 </Stack>
-                            </Col>
-                        </Row>
+                            </td>
+                        </tr>
                     ))
                 }
-            </div>
+                </tbody>
+            </Table>
         );
     }
 

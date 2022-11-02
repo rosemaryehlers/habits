@@ -17,8 +17,11 @@
   display: flex;
   align-items: center;
 }
+td.left {
+  vertical-align: middle;
+}
 
-.content-container .col.right {
+.content-container .col.right, td.right {
   display: flex;
   justify-content: right;
 }
@@ -39,30 +42,27 @@
   bottom: 58px; /* if both error and content alerts are showing, don't let content alert scroll behind error alert */
 }
 
+.accordion-button {
+  min-height: 31px;
+  padding: 0;
+}
+
 .accordion-button:focus {
   border: none;
   box-shadow: none;
 }
 
-.accordion.left.row {
-  height: auto;
-}
-.accordion.left .accordion-button {
-  height: 42px;
-  padding: 0;
-}
-
-.accordion.left .accordion-button:not(.collapsed){
+.accordion .accordion-button:not(.collapsed){
   color: unset;
   background-color: unset;
   box-shadow: unset;
   font-weight: bold;
 }
 
-.accordion.left .accordion-button::after {
+.accordion .accordion-button::after {
   all: unset;
 }
-.accordion.left .accordion-button::before {
+.accordion .accordion-button::before {
   flex-shrink: 0;
   width: var(--bs-accordion-btn-icon-width);
   height: var(--bs-accordion-btn-icon-width);
@@ -74,10 +74,10 @@
   margin-right: calc(var(--bs-gutter-x) * .5);
 }
 
-.accordion.left .accordion-button:not(.collapsed)::after {
+.accordion .accordion-button:not(.collapsed)::after {
   all: unset;
 }
-.accordion.left .accordion-button:not(.collapsed)::before {
+.accordion .accordion-button:not(.collapsed)::before {
   background-image: var(--bs-accordion-btn-active-icon);
   transform: var(--bs-accordion-btn-icon-transform);
 }

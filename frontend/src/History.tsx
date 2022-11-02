@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
+import { Accordion, Col, Container, Row, Table } from 'react-bootstrap';
 import { GlobalProps } from './GlobalProps';
 import ItemHistory, { ItemHistoryProps } from './ItemHistory';
 import './History.css';
-import { Accordion } from 'react-bootstrap';
 import AppNavigation, { AppNavigationProps } from './AppNavigation';
 
 export interface HistoryProps extends AppNavigationProps, GlobalProps {
@@ -105,12 +102,15 @@ function History(props: HistoryProps){
         <div>
             <AppNavigation {...props} />
             <Container fluid className="history page-content">
-                <Accordion className="left row" flush>
+                <Accordion flush>
+                    <Table >
+                        <tbody>
                 { items.map(item => (
+                    <tr><td>
                     <Accordion.Item eventKey={item.id + ""} key={item.id}>
                         <Accordion.Header onClick={ (e) => { onItemHistoryClick(e, item.id); } }>
-                            <Col className="left">{item.name}</Col>
-                            <Col className="right">{ renderItemSuccess(item) }</Col>
+                            <div className="col left">{item.name}</div>
+                            <div className="col right">{ renderItemSuccess(item) }</div>
                         </Accordion.Header>
                         <Accordion.Body id={item.id + ""}>
                             { loadedHistories.includes(item.id) &&
@@ -118,7 +118,10 @@ function History(props: HistoryProps){
                             }
                         </Accordion.Body>
                     </Accordion.Item>
+                    </td></tr>
                 )) }
+                        </tbody>
+                    </Table>
                 </Accordion>
             </Container>
         </div>

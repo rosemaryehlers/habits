@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Col, Row, Table } from 'react-bootstrap';
 import { GlobalProps } from './GlobalProps';
 
 export interface ItemHistoryProps extends GlobalProps {
@@ -109,14 +109,14 @@ function ItemHistory(props: ItemHistoryProps) {
         <div className="item-history">
             {
                 state.entries.map(entry => (
-                    <Row key={entry.dueDate}>
-                        <Col className="left">
-                            { (new Date(entry.dueDate)).toLocaleDateString("en-us", {month: '2-digit', day: '2-digit'}) }
-                        </Col>
-                        <Col className="right">
-                            { renderEntrySuccess(entry) }
-                        </Col>
-                    </Row>
+                    <Table borderless>
+                        <tbody>
+                            <tr key={entry.dueDate}>
+                                <td className="left">{ (new Date(entry.dueDate)).toLocaleDateString("en-us", {month: '2-digit', day: '2-digit'}) }</td>
+                                <td className="right">{ renderEntrySuccess(entry) }</td>
+                            </tr>
+                        </tbody>
+                    </Table>
                 ))
             }
         </div>
