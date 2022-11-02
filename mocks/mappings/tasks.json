@@ -1,0 +1,94 @@
+[{
+    "Guid": "f76cd280-4f6e-4ff0-a047-2b06a4062f58",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/tasks",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["get"]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "tasks": [{
+                "id": 1,
+                "name": "Clean Kitchen",
+                "type": "finite",
+                "status": {
+                    "goal": 1,
+                    "count": 0
+                }
+            },
+            {
+                "id": 2,
+                "name": "Clean Living Room",
+                "type": "finite",
+                "status": {
+                    "goal": 1,
+                    "count": 1
+                }
+            },
+            {
+                "id": 3,
+                "name": "Daily Chores",
+                "type": "infinite",
+                "status": {
+                    "count": 2
+                }
+            },
+            {
+                "id": 4,
+                "name": "Exercise",
+                "type": "finite",
+                "status": {
+                    "goal": 4,
+                    "count": 1
+                }
+            },
+            {
+                "id": 666,
+                "name": "Error",
+                "type": "finite",
+                "status": {
+                    "goal": 1,
+                    "count": 0
+                }
+            },
+            {
+                "id": 11,
+                "name": "Clean",
+                "type": "finite",
+                "status": {
+                    "goal": 1,
+                    "count": 0
+                }
+            },
+            {
+                "id": 22,
+                "name": "Brush Teeth",
+                "type": "infinite",
+                "status": {
+                    "count": 2
+                }
+            },
+            {
+                "id": 33,
+                "name": "Floss",
+                "type": "finite",
+                "status": {
+                    "goal": 4,
+                    "count": 3
+                }
+            }]
+        }
+    }
+}]
