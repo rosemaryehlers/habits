@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion, Col, Container, Row, Table } from 'react-bootstrap';
-import { GlobalProps } from './GlobalProps';
-import ItemHistory, { ItemHistoryProps } from './ItemHistory';
+import { Accordion, Container, Row, Table } from 'react-bootstrap';
+import { GlobalProps, Task } from './GlobalProps';
+import TaskHistory from './TaskHistory';
 import './History.css';
 import AppNavigation, { AppNavigationProps } from './AppNavigation';
 
@@ -9,24 +9,17 @@ export interface HistoryProps extends AppNavigationProps, GlobalProps {
     selectedView?: string;
 }
 
-interface ItemStatus {
-    goal?: number;
-    count: number;
-}
-interface ItemThreshold {
+interface TaskThreshold {
     success: number;
     fail: number;
 }
-interface Item {
-    id: number;
-    name: string;
-    type: string;
-    status: ItemStatus;
-    threshold?: ItemThreshold;
+interface HistoricalTask extends Task {
+    count: number;
+    threshold?: TaskThreshold;
 }
 
 function History(props: HistoryProps){
-    const [items, setItems] = useState<Array<Item>>([]);
+    const [items, setItems] = useState<Array<HistoricalTask>>([]);
     const [loadedHistories, setLoadedHistories] = useState<Array<number>>([]);
     const historyPath = "/history";
 
@@ -69,9 +62,9 @@ function History(props: HistoryProps){
         setLoadedHistories(newHistories);
     }
 
-    function renderItemSuccess(item: Item){
-        if(item.type === "finite" && item.status.goal !== undefined){
-            let percentage = Math.floor( (item.status.count / item.status.goal) * 100 );
+    function renderItemSuccess(item: HistoricalTask){
+        if(item.type === "finite" && item.goal !== undefined){
+            let percentage = Math.floor( (item.count / item.goal) * 100 );
             let color = "";
             if(item.threshold !== undefined && percentage >= item.threshold.success){
                 color = "success";
@@ -82,13 +75,13 @@ function History(props: HistoryProps){
             return (<span className={color}>{percentage}%</span>);
         } else if(item.type === "infinite"){
             let color = "";
-            if(item.threshold !== undefined && item.status.count >= item.threshold.success){
+            if(item.threshold !== undefined && item.count >= item.threshold.success){
                 color = "success";
             }
-            if(item.threshold !== undefined && item.status.count <= item.threshold.fail){
+            if(item.threshold !== undefined && item.count <= item.threshold.fail){
                 color = "fail";
             }
-            return (<span className={color}>{item.status.count}</span>);
+            return (<span className={color}>{item.count}</span>);
         }
 
         return ("Unknown item type.");
@@ -114,7 +107,7 @@ function History(props: HistoryProps){
                         </Accordion.Header>
                         <Accordion.Body id={item.id + ""}>
                             { loadedHistories.includes(item.id) &&
-                                <ItemHistory itemId={item.id} {...props} />
+                                <TaskHistory itemId={item.id} {...props} />
                             }
                         </Accordion.Body>
                     </Accordion.Item>

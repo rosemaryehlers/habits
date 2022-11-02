@@ -34,10 +34,8 @@
                     "id": 1,
                     "name": "Clean Kitchen",
                     "type": "finite",
-                    "status": {
-                        "goal": 6,
-                        "count": 4
-                    },
+                    "goal": 6,
+                    "count": 4,
                     "threshold": {
                         "success": 85,
                         "fail": 67
@@ -47,10 +45,8 @@
                     "id": 2,
                     "name": "Clean Living Room",
                     "type": "finite",
-                    "status": {
-                        "goal": 6,
-                        "count": 6
-                    },
+                    "goal": 6,
+                    "count": 6,
                     "threshold": {
                         "success": 85,
                         "fail": 67
@@ -60,9 +56,7 @@
                     "id": 3,
                     "name": "Daily Chores",
                     "type": "infinite",
-                    "status": {
-                        "count": 8
-                    },
+                    "count": 8,
                     "threshold": {
                         "success": 9,
                         "fail": 5
@@ -72,10 +66,8 @@
                     "id": 4,
                     "name": "Exercise",
                     "type": "finite",
-                    "status": {
-                        "goal": 24,
-                        "count": 19
-                    },
+                    "goal": 24,
+                    "count": 19,
                     "threshold": {
                         "success": 85,
                         "fail": 67
@@ -85,10 +77,8 @@
                     "id": 666,
                     "name": "Error",
                     "type": "finite",
-                    "status": {
-                        "goal": 666,
-                        "count": 13
-                    },
+                    "goal": 666,
+                    "count": 13,
                     "threshold": {
                         "success": 100,
                         "fail": 99

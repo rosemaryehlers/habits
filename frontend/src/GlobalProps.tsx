@@ -9,3 +9,10 @@ export interface GlobalProps {
         changeHeaderText: React.Dispatch<React.SetStateAction<JSX.Element | undefined>>;
     }
 }
+
+export interface Task {
+    id: number;
+    name: string;
+    type: string;
+    goal?: number;
+}

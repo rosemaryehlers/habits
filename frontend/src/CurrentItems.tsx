@@ -2,18 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Alert, Button, Container, Stack, Table } from 'react-bootstrap';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
-import { GlobalProps } from './GlobalProps';
+import { GlobalProps, Task } from './GlobalProps';
 import AppNavigation, { AppNavigationProps } from './AppNavigation';
 
-interface CurrentItemStatus {
-    goal?: number;
+
+export interface CurrentTask extends Task {
     count: number;
-}
-interface CurrentItem {
-    id: number;
-    name: string;
-    type: string;
-    status: CurrentItemStatus;
 }
 export interface CurrentItemsProps extends AppNavigationProps, GlobalProps {
     selectedView?: string;
@@ -23,7 +17,7 @@ const timeoutMilliseconds = 5000;
 const markItemUrl = "/mark-item";
 
 function CurrentItems(props: CurrentItemsProps) {
-    const [items, setItems] = useState<Array<CurrentItem>>([]);
+    const [items, setItems] = useState<Array<CurrentTask>>([]);
     const [showUndoSuccess, setShowUndoSuccess] = useState(false);
     const [undoTimeout, setUndoTimeout] = useState<NodeJS.Timeout>();
     const [lastMarkedId, setLastMarkedId] = useState<number>();
@@ -181,14 +175,14 @@ function CurrentItems(props: CurrentItemsProps) {
         });
     }
 
-    function itemStatus(item: CurrentItem) {
+    function itemStatus(item: CurrentTask) {
         var status = [];
-        if (item.type === "finite" && item.status.goal !== undefined) {
-            for(var i = 0; i < item.status.goal - item.status.count; i++){
+        if (item.type === "finite" && item.goal !== undefined) {
+            for(var i = 0; i < item.goal - item.count; i++){
                 status.push(<img src={iconcheck} className="svg-grey-light" alt="incomplete" key={item.id + "-todo-" + i} />);
             }
         }
-        for(i = 0; i < item.status.count; i++){
+        for(i = 0; i < item.count; i++){
             status.push(<img src={iconcheck} className="svg-green" alt="complete" key={item.id + "-done-" + i}/>);
         }
         return status;
@@ -227,7 +221,7 @@ function CurrentItems(props: CurrentItemsProps) {
                                     <div className="status">
                                         {itemStatus(item)}
                                     </div>
-                                    <Button onClick={onMarkItem} id={item.id + ""} variant="primary" size="sm" disabled={(item.type !== "infinite" && item.status.goal !== undefined && item.status.goal === item.status.count)}>
+                                    <Button onClick={onMarkItem} id={item.id + ""} variant="primary" size="sm" disabled={(item.type !== "infinite" && item.goal !== undefined && item.goal === item.count)}>
                                         <img src={iconcheck} className="svg-white" alt="complete task" key={item.id + "-complete-task"} />
                                     </Button>{' '}
                                 </Stack>

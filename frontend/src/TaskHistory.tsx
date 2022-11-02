@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Col, Row, Table } from 'react-bootstrap';
-import { GlobalProps } from './GlobalProps';
+import { GlobalProps, Task } from './GlobalProps';
 
-export interface ItemHistoryProps extends GlobalProps {
+export interface TaskHistoryProps extends GlobalProps {
     itemId: number;
 }
 
@@ -10,20 +10,15 @@ interface Entry {
     dueDate: string;
     count: number;
 }
-interface ItemMetadata {
-    name: string;
-    type: string;
-    goal?: number;
-}
 interface ItemHistoryState {
     entries: Array<Entry>;
-    itemMetadata?: ItemMetadata;
+    itemMetadata?: Task;
     loaded: boolean;
 }
 
 const historyPath = "/history";
 
-function ItemHistory(props: ItemHistoryProps) {
+function TaskHistory(props: TaskHistoryProps) {
     // put everything in one object because we want it to be updated together
     // we don't want a call to render when we've only updated the entries but not the item metadata, etc
     const [state, setState] = useState<ItemHistoryState>();
@@ -55,7 +50,7 @@ function ItemHistory(props: ItemHistoryProps) {
             let metadata = {
                 name: data.name,
                 type: data.type
-            } as ItemMetadata;
+            } as Task;
             if(data.goal !== undefined){
                 metadata.goal = data.goal;
             }
@@ -123,4 +118,4 @@ function ItemHistory(props: ItemHistoryProps) {
     );
 }
 
-export default ItemHistory;
+export default TaskHistory;

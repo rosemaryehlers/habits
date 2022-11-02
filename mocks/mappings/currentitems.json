@@ -73,45 +73,35 @@
                     "id": 1,
                     "name": "Clean Kitchen",
                     "type": "finite",
-                    "status": {
-                        "goal": 1,
-                        "count": 0
-                    }
+                    "goal": 1,
+                    "count": 0
                 },
                 {
                     "id": 2,
                     "name": "Clean Living Room",
                     "type": "finite",
-                    "status": {
-                        "goal": 1,
-                        "count": 1
-                    }
+                    "goal": 1,
+                    "count": 1
                 },
                 {
                     "id": 3,
                     "name": "Daily Chores",
                     "type": "infinite",
-                    "status": {
-                        "count": 2
-                    }
+                    "count": 2
                 },
                 {
                     "id": 4,
                     "name": "Exercise",
                     "type": "finite",
-                    "status": {
-                        "goal": 4,
-                        "count": 1
-                    }
+                    "goal": 4,
+                    "count": 1
                 },
                 {
                     "id": 666,
                     "name": "Error",
                     "type": "finite",
-                    "status": {
-                        "goal": 1,
-                        "count": 0
-                    }
+                    "goal": 1,
+                    "count": 0
                 }
             ]
         }
@@ -155,27 +145,21 @@
                     "id": 11,
                     "name": "Clean",
                     "type": "finite",
-                    "status": {
-                        "goal": 1,
-                        "count": 0
-                    }
+                    "goal": 1,
+                    "count": 0
                 },
                 {
                     "id": 22,
                     "name": "Brush Teeth",
                     "type": "infinite",
-                    "status": {
-                        "count": 2
-                    }
+                    "count": 2
                 },
                 {
                     "id": 33,
                     "name": "Floss",
                     "type": "finite",
-                    "status": {
-                        "goal": 4,
-                        "count": 3
-                    }
+                    "goal": 4,
+                    "count": 3
                 }
             ]
         }
