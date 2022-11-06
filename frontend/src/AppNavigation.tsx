@@ -65,30 +65,11 @@ function AppNavigation(props: AppNavigationProps) {
                 }
             </Col>
             <Col className='right'>
-                    { props.selectedMode === "edit" &&
-                    <Button variant="outline-secondary" size="sm">
-                        <img src={iconback} alt='Back' />
-                    </Button>
-                    }
-                    { props.selectedMode !== "edit" &&
-                    <Button variant="outline-secondary" size="sm" 
-                        onClick={ () => { setShowSettingsModal(true); }} >
-                        <img src={icongear} alt='Settings' />
-                    </Button>
-                    }
+                <Button variant="outline-secondary" size="sm" onClick={ () => { props.global.onSelectedModeChange("Configure"); } } >
+                    <img src={icongear} alt='Settings' />
+                </Button>
             </Col>
         </Row>
-
-        <Modal 
-            show={ showSettingsModal }
-            className="settings-modal" size="sm" centered >
-            <Modal.Body>
-                <Stack>
-                    <Button variant="outline-primary" onClick={ () => { props.global.onSelectedModeChange("Edit"); } } >Edit Views</Button>
-                    <Button variant="secondary" onClick={ () => { setShowSettingsModal(false); } } className="close" >Close</Button>
-                </Stack>
-            </Modal.Body>
-        </Modal>
     </Container>
     );
 }

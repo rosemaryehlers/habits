@@ -1,0 +1,12 @@
+.edit.container-fluid {
+    justify-content: center;
+    display: flex;
+}
+.edit .hstack .btn {
+    margin-left: 10px;
+}
+.edit .btn svg {
+    fill: #fff;
+    height: 16px;
+    width: 16px;
+}

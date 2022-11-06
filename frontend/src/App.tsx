@@ -4,7 +4,7 @@ import CurrentItems, { CurrentItemsProps } from './CurrentItems';
 import './App.css';
 import { GlobalProps } from './GlobalProps';
 import History, { HistoryProps } from './History';
-import EditViews from './EditViews';
+import Configure from './Configure';
 import { AppNavigationProps } from './AppNavigation';
 
 interface AppProps {
@@ -118,8 +118,8 @@ function App(props: AppProps){
                 { selectedMode === "History" &&
                   <History {...historyProps } />
                 }
-                { selectedMode === "Edit" &&
-                  <EditViews {...globalProps} />
+                { selectedMode === "Configure" &&
+                  <Configure {...globalProps} />
                 }
             </div>
             <div className="footer">
