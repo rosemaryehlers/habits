@@ -214,7 +214,7 @@ function CurrentItems(props: CurrentItemsProps) {
                 <tbody>
                 {
                     items.map(item => (
-                        <tr>
+                        <tr key={item.id}>
                             <td className="left">{item.name}</td>
                             <td className="right">
                                 <Stack direction="horizontal" gap={1}>

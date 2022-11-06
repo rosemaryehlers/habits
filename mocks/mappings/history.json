@@ -474,10 +474,8 @@
                     "id": 11,
                     "name": "Clean",
                     "type": "finite",
-                    "status": {
-                        "goal": 1,
-                        "count": 1
-                    },
+                    "goal": 1,
+                    "count": 1,
                     "threshold": {
                         "success": 85,
                         "fail": 67
@@ -487,18 +485,14 @@
                     "id": 22,
                     "name": "Brush Teeth",
                     "type": "infinite",
-                    "status": {
-                        "count": 10
-                    }
+                    "count": 10
                 },
                 {
                     "id": 33,
                     "name": "Floss",
                     "type": "finite",
-                    "status": {
-                        "goal": 8,
-                        "count": 7
-                    },
+                    "goal": 8,
+                    "count": 7,
                     "threshold": {
                         "success": 85,
                         "fail": 67

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Col, Container, Dropdown, Form, Modal, Row, Stack } from 'react-bootstrap';
+import { Button, ButtonGroup, ButtonToolbar, Col, Container, Dropdown, DropdownButton, Form, InputGroup, Modal, Row, Stack } from 'react-bootstrap';
 import './Navigation.css';
 import icongear from 'bootstrap-icons/icons/gear-fill.svg';
 import iconback from 'bootstrap-icons/icons/arrow-left.svg';
@@ -19,9 +19,6 @@ function AppNavigation(props: AppNavigationProps) {
     function onViewChange(e: any){
         props.onSelectedViewChange(e.target.text);
     }
-    function onModeChange(e: any){
-        props.global.onSelectedModeChange(e.target.text);
-    }
     function onWeeksChange(e: any){
         console.log(e);
         e.preventDefault();
@@ -31,37 +28,41 @@ function AppNavigation(props: AppNavigationProps) {
         <Container fluid className='navigation'>
         <Row>
             <Col className='left'>
-                <Dropdown>
-                    <Dropdown.Toggle size='sm' variant='outline-primary'>{props.selectedView}</Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        <Dropdown.ItemText>Select View</Dropdown.ItemText>
-                        <Dropdown.Divider />
-                        {
-                            props.global.views.filter(v => v !== props.selectedView).map(view => (
-                            <Dropdown.Item onClick={onViewChange} value={view} key={view}>{view}</Dropdown.Item>
-                            ))
-                        }
-                    </Dropdown.Menu>
-                </Dropdown>
-                <Dropdown>
-                    <Dropdown.Toggle size='sm' variant='outline-primary'>{props.selectedMode}</Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        {
-                            props.global.modes.filter(m => m !== props.selectedMode).map(mode => (
-                                <Dropdown.Item onClick={onModeChange} value={mode} key={mode}>{mode}</Dropdown.Item>
-                            ))
-                        }
-                    </Dropdown.Menu>
-                </Dropdown>
-                { props.selectedMode === "History" &&
-                <Form id="weeksInput" onSubmit={ onWeeksChange }>
-                    <Form.Control disabled defaultValue={6} required size="sm"></Form.Control>
-                    <Form.Text>weeks</Form.Text>
-                </Form>
-                }
+                <ButtonToolbar aria-label="App navigation">
+                    <ButtonGroup aria-label="Mode">
+                        <Button onClick={ () => {props.global.onSelectedModeChange("Current")} } variant={ props.selectedMode === "Current" ? "primary" : "outline-primary" } >Current</Button>
+                        <Button onClick={ () => {props.global.onSelectedModeChange("History")} } variant={ props.selectedMode === "History" ? "primary" : "outline-primary" }>History</Button>
+                    </ButtonGroup>
+                    <ButtonGroup aria-label="View">
+                        <DropdownButton as={ButtonGroup} variant="outline-primary" title={props.selectedView ?? "Loading"}>
+
+                            <Dropdown.ItemText>Select View</Dropdown.ItemText>
+                            <Dropdown.Divider />
+                            {
+                                props.global.views.filter(v => v !== props.selectedView).map(view => (
+                                <Dropdown.Item onClick={onViewChange} value={view} key={view}>{view}</Dropdown.Item>
+                                ))
+                            }
+                        </DropdownButton>
+                    </ButtonGroup>
+                </ButtonToolbar>
             </Col>
             <Col className="center">
-                { props.headerText }
+                { props.selectedMode !== "History" &&
+                    <span>{ props.headerText }</span>
+                }
+                { props.selectedMode === "History" &&
+                    <InputGroup aria-label="Weeks" className="weeks-input">
+                        <InputGroup.Text id="historyWeeks">Weeks</InputGroup.Text>
+                        <Form.Control disabled
+                            defaultValue={6}
+                            id="weeksInput"
+                            onSubmit={ onWeeksChange }
+                            type="text"
+                            aria-label="Weeks input"
+                            aria-describedby="historyWeeks" />
+                    </InputGroup>
+                }
             </Col>
             <Col className='right'>
                     { props.selectedMode === "edit" &&

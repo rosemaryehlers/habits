@@ -99,8 +99,8 @@ function History(props: HistoryProps){
                     <Table >
                         <tbody>
                 { items.map(item => (
-                    <tr><td>
-                    <Accordion.Item eventKey={item.id + ""} key={item.id}>
+                    <tr key={item.id}><td>
+                    <Accordion.Item eventKey={item.id + ""}>
                         <Accordion.Header onClick={ (e) => { onItemHistoryClick(e, item.id); } }>
                             <div className="col left">{item.name}</div>
                             <div className="col right">{ renderItemSuccess(item) }</div>

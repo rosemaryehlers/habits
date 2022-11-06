@@ -104,9 +104,9 @@ function TaskHistory(props: TaskHistoryProps) {
         <div className="item-history">
             {
                 state.entries.map(entry => (
-                    <Table borderless>
+                    <Table borderless key={entry.dueDate} >
                         <tbody>
-                            <tr key={entry.dueDate}>
+                            <tr>
                                 <td className="left">{ (new Date(entry.dueDate)).toLocaleDateString("en-us", {month: '2-digit', day: '2-digit'}) }</td>
                                 <td className="right">{ renderEntrySuccess(entry) }</td>
                             </tr>

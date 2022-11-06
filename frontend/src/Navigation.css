@@ -27,11 +27,12 @@
     padding-right: 10px;
 }
 
-#weeksInput input {
-    display: inline;
-    width: 35px;
-    margin: 0px 5px 0px 0px;
-    text-align: center;
+.weeks-input.input-group {
+    width: fit-content;
+    min-width: 125px;
+}
+.weeks-input.input-group input {
+    width: 50px;
 }
 #weeksInput .form-text {
     color: #000000;
@@ -42,4 +43,8 @@
 }
 .settings-modal button.close {
     margin-bottom: 0;
+}
+
+.navigation .btn-group {
+    margin-right: 10px;
 }

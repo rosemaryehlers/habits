@@ -58,7 +58,6 @@ function App(props: AppProps){
       setSelectedView(newView);
     }
     function onModeChange(newMode: string) {
-      console.log("App.tsx onModeChange");
       setSelectedMode(newMode);
     }
 
