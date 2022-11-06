@@ -110,8 +110,8 @@ function App(props: AppProps){
     } as HistoryProps;
 
     return (
-        <div>
-            <div className={ "content-container " + (error !== undefined ? "err" : "")}>
+        <div className="app-container">
+            <div className={ error !== undefined ? "err" : "" }>
                 { selectedMode === "Current" &&
                   <CurrentItems {...currentItemsProps} />
                 }
@@ -122,7 +122,7 @@ function App(props: AppProps){
                   <Configure {...globalProps} />
                 }
             </div>
-            <div className="footer">
+            <div className="footer-container">
                 <Alert variant="danger" dismissible transition={false}
                     show={ error !== undefined }
                     onClose={ dismissErrorAlert }>

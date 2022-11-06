@@ -237,10 +237,10 @@ function CurrentItems(props: CurrentItemsProps) {
     return (
         <div>
             <AppNavigation {...props} />
-            <Container fluid className="current-items">
+            <Container fluid className="content-container current-items">
                 {renderItems()}
             </Container>
-            <div className="footer">
+            <div className="content-footer">
                 <Alert variant="success" dismissible transition={false}
                     show={lastMarkedId !== undefined}
                     onClose={ dismissUndoAlert }>

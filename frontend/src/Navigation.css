@@ -1,50 +1,23 @@
-.navigation {
-    background: #e6f2ff;
-    vertical-align: middle;
-}
-
-.navigation .col {
-    display: flex;
-    align-items: center;
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
-.navigation .col.center {
-    justify-content: center;
-}
-
-.navigation .col.right {
-    justify-content: right;
-}
-
-.content-container .navigation .row, form .row {
-    border:none;
-    height: inherit;
-}
-
-.navigation .dropdown {
-    padding-right: 10px;
-}
-
-.weeks-input.input-group {
-    width: fit-content;
-    min-width: 125px;
-}
-.weeks-input.input-group input {
-    width: 50px;
-}
-#weeksInput .form-text {
-    color: #000000;
-}
-
+/*
 .settings-modal button {
     margin-bottom: var(--bs-modal-padding);
 }
 .settings-modal button.close {
     margin-bottom: 0;
 }
+*/
 
-.navigation .btn-group {
-    margin-right: 10px;
+.navigation-container .navbar {
+    order: 1;
+}
+.navigation-container .content-header {
+    order: 2;
+    flex-grow: 1;
+}
+.navigation-container .configure.btn {
+    order: 3;
+}
+
+.navigation-container .btn-group {
+    margin-right: 0.5rem;
 }

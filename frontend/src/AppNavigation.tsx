@@ -25,34 +25,33 @@ function AppNavigation(props: AppNavigationProps) {
     }
 
     return (
-        <Container fluid className='navigation'>
-        <Row>
-            <Col className='left'>
-                <ButtonToolbar aria-label="App navigation">
-                    <ButtonGroup aria-label="Mode">
-                        <Button onClick={ () => {props.global.onSelectedModeChange("Current")} } variant={ props.selectedMode === "Current" ? "primary" : "outline-primary" } >Current</Button>
-                        <Button onClick={ () => {props.global.onSelectedModeChange("History")} } variant={ props.selectedMode === "History" ? "primary" : "outline-primary" }>History</Button>
-                    </ButtonGroup>
-                    <ButtonGroup aria-label="View">
-                        <DropdownButton as={ButtonGroup} variant="outline-primary" title={props.selectedView ?? "Loading"}>
+        <Container fluid className='navigation-container'>
 
-                            <Dropdown.ItemText>Select View</Dropdown.ItemText>
-                            <Dropdown.Divider />
-                            {
-                                props.global.views.filter(v => v !== props.selectedView).map(view => (
-                                <Dropdown.Item onClick={onViewChange} value={view} key={view}>{view}</Dropdown.Item>
-                                ))
-                            }
-                        </DropdownButton>
-                    </ButtonGroup>
-                </ButtonToolbar>
-            </Col>
-            <Col className="center">
+            <ButtonToolbar className="navbar" aria-label="App navigation">
+                <ButtonGroup aria-label="Mode">
+                    <Button size="sm" onClick={ () => {props.global.onSelectedModeChange("Current")} } variant={ props.selectedMode === "Current" ? "primary" : "outline-primary" } >Current</Button>
+                    <Button size="sm" onClick={ () => {props.global.onSelectedModeChange("History")} } variant={ props.selectedMode === "History" ? "primary" : "outline-primary" }>History</Button>
+                </ButtonGroup>
+                <ButtonGroup aria-label="View">
+                    <DropdownButton size="sm" as={ButtonGroup} variant="outline-primary" title={props.selectedView ?? "Loading"}>
+
+                        <Dropdown.ItemText>Select View</Dropdown.ItemText>
+                        <Dropdown.Divider />
+                        {
+                            props.global.views.filter(v => v !== props.selectedView).map(view => (
+                            <Dropdown.Item onClick={onViewChange} value={view} key={view}>{view}</Dropdown.Item>
+                            ))
+                        }
+                    </DropdownButton>
+                </ButtonGroup>
+            </ButtonToolbar>
+
+            <div className="content-header">
                 { props.selectedMode !== "History" &&
                     <span>{ props.headerText }</span>
                 }
                 { props.selectedMode === "History" &&
-                    <InputGroup aria-label="Weeks" className="weeks-input">
+                    <InputGroup size="sm" aria-label="Weeks" className="weeks-input">
                         <InputGroup.Text id="historyWeeks">Weeks</InputGroup.Text>
                         <Form.Control disabled
                             defaultValue={6}
@@ -63,13 +62,11 @@ function AppNavigation(props: AppNavigationProps) {
                             aria-describedby="historyWeeks" />
                     </InputGroup>
                 }
-            </Col>
-            <Col className='right'>
-                <Button variant="outline-secondary" size="sm" onClick={ () => { props.global.onSelectedModeChange("Configure"); } } >
-                    <img src={icongear} alt='Settings' />
-                </Button>
-            </Col>
-        </Row>
+            </div>
+
+            <Button className="configure" variant="outline-secondary" size="sm" onClick={ () => { props.global.onSelectedModeChange("Configure"); } } >
+                <img src={icongear} alt='Settings' />
+            </Button>
     </Container>
     );
 }
