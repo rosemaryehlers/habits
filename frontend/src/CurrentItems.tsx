@@ -209,29 +209,21 @@ function CurrentItems(props: CurrentItemsProps) {
             );
         }
 
-        return (
-            <Table>
-                <tbody>
-                {
-                    items.map(item => (
-                        <tr key={item.id}>
-                            <td className="left">{item.name}</td>
-                            <td className="right">
-                                <Stack direction="horizontal" gap={1}>
-                                    <div className="status">
-                                        {itemStatus(item)}
-                                    </div>
-                                    <Button onClick={onMarkItem} id={item.id + ""} variant="primary" size="sm" disabled={(item.type !== "infinite" && item.goal !== undefined && item.goal === item.count)}>
-                                        <img src={iconcheck} className="svg-white" alt="complete task" key={item.id + "-complete-task"} />
-                                    </Button>{' '}
-                                </Stack>
-                            </td>
-                        </tr>
-                    ))
-                }
-                </tbody>
-            </Table>
-        );
+        return items.map(item => (
+            <>
+                <div className="left" key={"name" + item.id}>{item.name}</div>
+                <div className="right" key={"status" + item.id}>
+                    <Stack direction="horizontal" gap={1}>
+                        <div className="status">
+                            {itemStatus(item)}
+                        </div>
+                        <Button onClick={onMarkItem} id={item.id + ""} variant="primary" size="sm" disabled={(item.type !== "infinite" && item.goal !== undefined && item.goal === item.count)}>
+                            <img src={iconcheck} className="svg-white" alt="complete task" key={item.id + "-complete-task"} />
+                        </Button>{' '}
+                    </Stack>
+                </div>
+            </>
+        ));
     }
 
     return (
