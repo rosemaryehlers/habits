@@ -92,18 +92,15 @@ function History(props: HistoryProps){
     }
 
     return (
-        <div>
+        <>
             <AppNavigation {...props} />
-            <Container fluid className="history page-content">
+            <Container fluid className="history content-container">
                 <Accordion flush>
-                    <Table >
-                        <tbody>
                 { items.map(item => (
-                    <tr key={item.id}><td>
-                    <Accordion.Item eventKey={item.id + ""}>
-                        <Accordion.Header onClick={ (e) => { onItemHistoryClick(e, item.id); } }>
-                            <div className="col left">{item.name}</div>
-                            <div className="col right">{ renderItemSuccess(item) }</div>
+                    <Accordion.Item eventKey={item.id + ""} key={item.id}>
+                        <Accordion.Header className="history-item-header" onClick={ (e) => { onItemHistoryClick(e, item.id); } }>
+                            <div className="left">{item.name}</div>
+                            <div className="right">{ renderItemSuccess(item) }</div>
                         </Accordion.Header>
                         <Accordion.Body id={item.id + ""}>
                             { loadedHistories.includes(item.id) &&
@@ -111,13 +108,10 @@ function History(props: HistoryProps){
                             }
                         </Accordion.Body>
                     </Accordion.Item>
-                    </td></tr>
                 )) }
-                        </tbody>
-                    </Table>
                 </Accordion>
             </Container>
-        </div>
+        </>
     );
 
 }

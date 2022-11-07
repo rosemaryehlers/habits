@@ -61,14 +61,14 @@
 }
 .accordion .accordion-button::before {
   flex-shrink: 0;
-  width: var(--bs-accordion-btn-icon-width);
-  height: var(--bs-accordion-btn-icon-width);
+  width: 16px;
+  height: 16px;
   content: "";
   background-image: var(--bs-accordion-btn-icon);
   background-repeat: no-repeat;
-  background-size: var(--bs-accordion-btn-icon-width);
+  background-size: contain;
   transition: var(--bs-accordion-btn-icon-transition);
-  margin-right: calc(var(--bs-gutter-x) * .5);
+  margin-right: .5rem;
 }
 
 .accordion .accordion-button:not(.collapsed)::after {
