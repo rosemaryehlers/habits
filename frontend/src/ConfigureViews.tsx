@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Stack, Table } from 'react-bootstrap';
+import { Button, Container, Stack, Table } from 'react-bootstrap';
 import Select from 'react-select';
 import { GlobalProps, Task } from './GlobalProps';
 import iconplus from 'bootstrap-icons/icons/plus-lg.svg'
@@ -110,50 +110,39 @@ function ConfigureViews(props: GlobalProps) {
     });
 
     return (
-        <div className="edit-form-container">
-            <div className="edit-form">
-                <Table borderless>
-                    <tbody>
-                        <tr>
-                            <td>View</td>
-                            <td>
-                                <Select options={editViewsOptions} onChange={ (e: any) => { setSelectedView(e.value); } } placeholder="Select View" />
-                            </td>
-                        </tr>
-                        { selectedView !== undefined && 
-                        <tr>
-                            <td>Add Task</td>
-                            <td>
-                                <Stack direction="horizontal">
-                                    <Select options={availableTaskOptions} />
-                                    <Button variant="success">
-                                        <img className="svg-white" src={iconplus} />
-                                    </Button>
-                                </Stack>
-                            </td>
-                        </tr>
-                        }
-                        { selectedView !== undefined && 
-                        <tr>
-                            <td>Current Tasks</td>
-                            <td>
-                                {
-                                    currentTaskIds.map(id => (
-                                        <div key={id}>
-                                            <div>{allTaskList.get(id)?.name}</div>
-                                            <Button size="sm" variant="danger">
-                                                <img className="svg-white" src={icontrash} />
-                                            </Button>
-                                        </div>
-                                    ))
-                                }
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </Table>
+        <Container fluid className="configure-tasks-container content-container">
+            <div className="label">View</div>
+            <div className="center">
+                <Select options={editViewsOptions} onChange={ (e: any) => { setSelectedView(e.value); } } placeholder="Select View" />
             </div>
-        </div>
+            <div className="icon"></div>
+
+            { selectedView !== undefined && 
+                <>
+                    <div className="label">Add Task</div>
+                    <div className="center"><Select options={availableTaskOptions} /></div>
+                    <div className="icon">
+                        <Button variant="success">
+                            <img className="svg-white" src={iconplus} />
+                        </Button>
+                    </div>
+
+                    {
+                        currentTaskIds.map(id => (
+                            <>
+                                <div className="label" key={"label" + id}></div>
+                                <div className="center" key={"center" + id}>{allTaskList.get(id)?.name}</div>
+                                <div className="icon" key={"icon" + id}>
+                                    <Button size="sm" variant="danger">
+                                        <img className="svg-white" src={icontrash} />
+                                    </Button>
+                                </div>
+                            </>
+                        ))
+                    }
+                </>
+            }
+        </Container>
     );
 }
 

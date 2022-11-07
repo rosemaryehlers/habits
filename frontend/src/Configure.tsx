@@ -19,33 +19,31 @@ function Configure(props: GlobalProps) {
     }
 
     return (
-        <div>
-            <Container fluid className='navigation'>
-                <Row>
-                    <Col className='left'>
-                        <ButtonToolbar aria-label="Navigation">
-                            <ButtonGroup aria-label="Action">
-                                { renderActionButton("Views") }
-                                { renderActionButton("Tasks") }
-                            </ButtonGroup>
-                        </ButtonToolbar>
-                    </Col>
-                    <Col className='right'>
-                            <Button variant="outline-secondary" size="sm" onClick={ ()=> { props.global.onSelectedModeChange("Current"); } }>
-                                <img src={iconback} alt='Back' />
-                            </Button>
-                    </Col>
-                </Row>
+        <>
+            <Container fluid className='navigation-container'>
+                <ButtonToolbar className="navbar" aria-label="Navigation">
+                    <ButtonGroup aria-label="Action">
+                        { renderActionButton("Views") }
+                        { renderActionButton("Tasks") }
+                    </ButtonGroup>
+                </ButtonToolbar>
+
+                <div className="content-header"></div>
+
+                <Button className="configure" variant="outline-secondary" size="sm" onClick={ ()=> { props.global.onSelectedModeChange("Current"); } }>
+                    <img src={iconback} alt='Back' />
+                </Button>
             </Container>
-            <Container fluid className="edit">
+
+            <>
                 { selectedAction === "Views" &&
                     <ConfigureViews {...props} />
                 }
                 { selectedAction === "Tasks" &&
                     <div>Configure tasks</div>
                 }
-            </Container>
-        </div>
+            </>
+        </>
     );
 }
 

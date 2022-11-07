@@ -26,6 +26,7 @@ function App(props: AppProps){
     const [selectedView, setSelectedView] = useState<string | undefined>();
     const [defaultView, setDefaultView] = useState<string | undefined>();
     const [headerText, setHeaderText] = useState<JSX.Element | undefined>();
+    const [contentAlerts, setContentAlerts] = useState<Array<JSX.Element>>([]);
 
     // initialize app
     useEffect(() => {
@@ -59,6 +60,9 @@ function App(props: AppProps){
     }
     function onModeChange(newMode: string) {
       setSelectedMode(newMode);
+    }
+    function addContentAlert(){
+      return;
     }
 
     function dismissErrorAlert(){
@@ -110,8 +114,8 @@ function App(props: AppProps){
     } as HistoryProps;
 
     return (
-        <div className="app-container">
-            <div className={ error !== undefined ? "err" : "" }>
+        <div className={ "app-container " + (error !== undefined ? "err" : "") } >
+            <>
                 { selectedMode === "Current" &&
                   <CurrentItems {...currentItemsProps} />
                 }
@@ -121,7 +125,8 @@ function App(props: AppProps){
                 { selectedMode === "Configure" &&
                   <Configure {...globalProps} />
                 }
-            </div>
+            </>
+            {/*
             <div className="footer-container">
                 <Alert variant="danger" dismissible transition={false}
                     show={ error !== undefined }
@@ -130,6 +135,7 @@ function App(props: AppProps){
                 </Alert>
             </div>
             <div id="footerSpacer"></div>
+            */}
         </div>
     );
 }

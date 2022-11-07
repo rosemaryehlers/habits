@@ -227,11 +227,12 @@ function CurrentItems(props: CurrentItemsProps) {
     }
 
     return (
-        <div>
+        <>
             <AppNavigation {...props} />
             <Container fluid className="content-container current-items">
                 {renderItems()}
             </Container>
+            {/*
             <div className="content-footer">
                 <Alert variant="success" dismissible transition={false}
                     show={lastMarkedId !== undefined}
@@ -245,7 +246,8 @@ function CurrentItems(props: CurrentItemsProps) {
                     <span>Success!</span>
                 </Alert>
             </div>
-        </div>
+            */}
+        </>
     );
 }
 
