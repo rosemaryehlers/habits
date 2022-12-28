@@ -4,6 +4,7 @@ export interface GlobalProps {
         port: number;
         views: Array<string>;
         modes: Array<string>;
+        alert: JSX.Element|undefined;
         onSelectedModeChange(mode: string): any;
         showErrorAlert(msg: string) : any;
         changeHeaderText: React.Dispatch<React.SetStateAction<JSX.Element | undefined>>;

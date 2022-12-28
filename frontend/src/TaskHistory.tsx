@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, Row, Table } from 'react-bootstrap';
 import { GlobalProps, Task } from './GlobalProps';
 
@@ -104,10 +104,10 @@ function TaskHistory(props: TaskHistoryProps) {
         <div className="item-history">
             {
                 state.entries.map(entry => (
-                    <>
-                        <div className="left" key={"left-" + entry.dueDate} >{ (new Date(entry.dueDate)).toLocaleDateString("en-us", {month: '2-digit', day: '2-digit'}) }</div>
-                        <div className="right" key={"right-" + entry.dueDate} >{ renderEntrySuccess(entry) }</div>
-                    </>
+                    <React.Fragment key={entry.dueDate}>
+                        <div className="left" >{ (new Date(entry.dueDate)).toLocaleDateString("en-us", {month: '2-digit', day: '2-digit'}) }</div>
+                        <div className="right" >{ renderEntrySuccess(entry) }</div>
+                    </React.Fragment>
                 ))
             }
         </div>

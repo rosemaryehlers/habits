@@ -3,4 +3,12 @@
     grid-template-columns: max-content max-content max-content;
     gap: 10px;
     width: max-content;
+    padding-top: 10px;
+    justify-content: start;
+}
+
+.configure-tasks-container .label,
+.configure-tasks-container .center,
+.configure-tasks-container .icon {
+    align-self: center;
 }

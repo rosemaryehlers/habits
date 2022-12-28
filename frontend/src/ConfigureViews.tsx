@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Container, Stack, Table } from 'react-bootstrap';
-import Select from 'react-select';
+import Select, { SelectInstance } from 'react-select';
 import { GlobalProps, Task } from './GlobalProps';
 import iconplus from 'bootstrap-icons/icons/plus-lg.svg'
 import icontrash from 'bootstrap-icons/icons/trash.svg';
@@ -10,6 +10,8 @@ function ConfigureViews(props: GlobalProps) {
     const [allTaskList, setAllTaskList] = useState<Map<number, Task>>(new Map<number, Task>());
     const [currentTaskIds, setCurrentTaskIds] = useState<Array<number>>([]);
     const [availableTasks, setAvailableTasks] = useState<Array<Task>>([]);
+    const addTaskSelectRef = useRef<SelectInstance>(null);
+    const [addTaskSelectedId, setAddTaskSelectedId] = useState<number|undefined>(undefined);
 
     // one time init
     useEffect(() => {
@@ -17,25 +19,7 @@ function ConfigureViews(props: GlobalProps) {
     }, []);
 
     useEffect(() => {
-        if(selectedView === undefined) {
-            return;
-        }
-
-        fetchCurrentTasks();
-
-        // calculate available tasks
-        let unsorted = new Array<Task>();
-        allTaskList.forEach((v: Task, k: number) => {
-            if(!currentTaskIds.includes(v.id)){
-                unsorted.push(v);
-            }
-        });
-        unsorted.sort((a: Task, b: Task) => {
-            if(a.name > b.name) return 1;
-            if(b.name > a.name) return -1;
-            return 0;
-        });
-        setAvailableTasks(unsorted);
+        loadSelectedView();
     }, [selectedView]);
 
     function fetchTasks(forceLoad: boolean = false){
@@ -98,6 +82,85 @@ function ConfigureViews(props: GlobalProps) {
             props.global.showErrorAlert("Error fetching items.");
         });
     }
+    function loadSelectedView(){
+        if(selectedView === undefined) {
+            return;
+        }
+
+        fetchCurrentTasks();
+
+        // calculate available tasks
+        let unsorted = new Array<Task>();
+        allTaskList.forEach((v: Task, k: number) => {
+            if(!currentTaskIds.includes(v.id)){
+                unsorted.push(v);
+            }
+        });
+        unsorted.sort((a: Task, b: Task) => {
+            if(a.name > b.name) return 1;
+            if(b.name > a.name) return -1;
+            return 0;
+        });
+        setAvailableTasks(unsorted);
+        const addTaskSelect = addTaskSelectRef.current;
+        addTaskSelect?.clearValue();
+    }
+    function addTask(){
+        if(addTaskSelectedId === undefined) {
+            props.global.showErrorAlert("No task selected");
+            return;
+        }
+        if(selectedView === undefined) {
+            props.global.showErrorAlert("No view selected");
+            return;
+        }
+
+        const addTaskPath = "/add-task";
+        var url = props.global.baseUrl 
+        + ":" + props.global.port 
+        + addTaskPath;
+        var data = {
+            taskId: addTaskSelectedId,
+            view: selectedView
+        };
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify(data)
+        }).then( resp => {
+            if(!resp.ok){
+                console.log(`Error ${resp.status} adding task ${addTaskSelectedId} to view ${selectedView}: ${resp.statusText}`);
+                props.global.showErrorAlert("Error adding task.");
+            }
+        }).catch(err => {
+            console.log(`Error adding task ${addTaskSelectedId} to view ${selectedView}`, err);
+            props.global.showErrorAlert("Error adding task.");
+        }).finally(() => {
+            loadSelectedView();
+        });
+    }
+    function removeTask(id: number){
+        const removeTaskPath = "/remove-task";
+        var url = props.global.baseUrl 
+        + ":" + props.global.port 
+        + removeTaskPath;
+        var data = {
+            taskId: id,
+            view: selectedView
+        };
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify(data)
+        });
+    }
+
+    function onAddTaskChange(value: any){
+        if(value === undefined || value === null){
+            setAddTaskSelectedId(undefined);
+        }
+        else {
+            setAddTaskSelectedId(value.value);
+        }
+    }
 
     let editViewsOptions = new Array<any>();
     props.global.views.forEach((v: string, i: number) => {
@@ -120,24 +183,24 @@ function ConfigureViews(props: GlobalProps) {
             { selectedView !== undefined && 
                 <>
                     <div className="label">Add Task</div>
-                    <div className="center"><Select options={availableTaskOptions} /></div>
+                    <div className="center"><Select options={availableTaskOptions} ref={addTaskSelectRef} onChange={ onAddTaskChange } /></div>
                     <div className="icon">
-                        <Button variant="success">
+                        <Button size="sm" variant="success" onClick={addTask}>
                             <img className="svg-white" src={iconplus} />
                         </Button>
                     </div>
 
                     {
                         currentTaskIds.map(id => (
-                            <>
-                                <div className="label" key={"label" + id}></div>
-                                <div className="center" key={"center" + id}>{allTaskList.get(id)?.name}</div>
-                                <div className="icon" key={"icon" + id}>
-                                    <Button size="sm" variant="danger">
+                            <React.Fragment key={id}>
+                                <div className="label"></div>
+                                <div className="center">{allTaskList.get(id)?.name}</div>
+                                <div className="icon">
+                                    <Button size="sm" variant="danger" onClick={ () => { removeTask(id); } }>
                                         <img className="svg-white" src={icontrash} />
                                     </Button>
                                 </div>
-                            </>
+                            </React.Fragment>
                         ))
                     }
                 </>

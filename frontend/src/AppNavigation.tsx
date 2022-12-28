@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Button, ButtonGroup, ButtonToolbar, Col, Container, Dropdown, DropdownButton, Form, InputGroup, Modal, Row, Stack } from 'react-bootstrap';
 import './Navigation.css';
 import icongear from 'bootstrap-icons/icons/gear-fill.svg';
-import iconback from 'bootstrap-icons/icons/arrow-left.svg';
 import { GlobalProps } from './GlobalProps';
 
 export interface AppNavigationProps extends GlobalProps {

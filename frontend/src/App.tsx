@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { Alert, Container } from 'react-bootstrap';
+import { useContext, useEffect, useState } from 'react'
+import { Alert } from 'react-bootstrap';
 import CurrentItems, { CurrentItemsProps } from './CurrentItems';
 import './App.css';
 import { GlobalProps } from './GlobalProps';
 import History, { HistoryProps } from './History';
 import Configure from './Configure';
 import { AppNavigationProps } from './AppNavigation';
+import { AlertsContext, AlertsProvider } from './Alerts';
 
 interface AppProps {
   baseUrl: string,
@@ -26,7 +27,6 @@ function App(props: AppProps){
     const [selectedView, setSelectedView] = useState<string | undefined>();
     const [defaultView, setDefaultView] = useState<string | undefined>();
     const [headerText, setHeaderText] = useState<JSX.Element | undefined>();
-    const [contentAlerts, setContentAlerts] = useState<Array<JSX.Element>>([]);
 
     // initialize app
     useEffect(() => {
@@ -60,9 +60,6 @@ function App(props: AppProps){
     }
     function onModeChange(newMode: string) {
       setSelectedMode(newMode);
-    }
-    function addContentAlert(){
-      return;
     }
 
     function dismissErrorAlert(){
@@ -113,30 +110,36 @@ function App(props: AppProps){
       selectedView: selectedView
     } as HistoryProps;
 
+    const alertsContext = useContext(AlertsContext);
+
     return (
-        <div className={ "app-container " + (error !== undefined ? "err" : "") } >
-            <>
-                { selectedMode === "Current" &&
-                  <CurrentItems {...currentItemsProps} />
-                }
-                { selectedMode === "History" &&
-                  <History {...historyProps } />
-                }
-                { selectedMode === "Configure" &&
-                  <Configure {...globalProps} />
-                }
-            </>
-            {/*
-            <div className="footer-container">
-                <Alert variant="danger" dismissible transition={false}
-                    show={ error !== undefined }
-                    onClose={ dismissErrorAlert }>
-                    <span>{ error?.msg }</span>
-                </Alert>
-            </div>
-            <div id="footerSpacer"></div>
-            */}
-        </div>
+      <AlertsProvider>
+          <div className={ "app-container " + (error !== undefined ? "err" : "") } >
+              { selectedMode === "Current" &&
+                <CurrentItems {...currentItemsProps} />
+              }
+              { selectedMode === "History" &&
+                <History {...historyProps } />
+              }
+              { selectedMode === "Configure" &&
+                <Configure {...globalProps} />
+              }
+          </div>
+          <div className="footer-container">
+              {
+                alertsContext.alerts.map(a => (
+                  <Alert variant={a.style} dismissible transition={false} onClose={a.callback}>
+                    {a.msg}
+                  </Alert>
+                ))
+              }
+              {/*<Alert variant="danger" dismissible transition={false}
+                  show={ error !== undefined }
+                  onClose={ dismissErrorAlert }>
+                  <span>{ error?.msg }</span>
+            </Alert>*/}
+          </div>
+      </AlertsProvider>
     );
 }
 
