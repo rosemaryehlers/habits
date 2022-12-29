@@ -112,6 +112,7 @@ function App(props: AppProps){
 
     const alertsContext = useContext(AlertsContext);
 
+    console.log("render app", alertsContext.alerts);
     return (
       <AlertsProvider>
           <div className={ "app-container " + (error !== undefined ? "err" : "") } >

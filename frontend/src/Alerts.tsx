@@ -1,4 +1,5 @@
-import { useState, createContext } from 'react';
+import React, { useState, createContext } from 'react';
+import { AlertProps } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface AppAlert {
@@ -10,18 +11,19 @@ export interface AppAlert {
 }
 export interface AlertContext {
     alerts: Array<AppAlert>,
-    addAlert: (msg: JSX.Element, style: string, callback: (id: string) => {}) => void,
+    addAlert: (msg: React.ReactNode, style: string, callback?: (id: string) => {}) => void,
     clearAlert: (id: string) => void
 }
+interface AlertsProps {} 
 
 const timeoutMilliseconds = 10000;
 export const AlertsContext = createContext<AlertContext>({
     alerts: [],
-    addAlert: (msg: JSX.Element, style: string, callback: (id: string) => {}) => { console.log("Alert context not initialized"); },
+    addAlert: (msg: React.ReactNode, style: string, callback?: (id: string) => {}) => { console.log("Alert context not initialized"); },
     clearAlert: (id: string) => { console.log("Well fuck"); }
 });
 
-export function AlertsProvider(children: any) {
+export function AlertsProvider(props: AlertProps) {
     const [currentAlerts, setCurrentAlerts] = useState<Array<AppAlert>>([]);
 
     function clearAlert(id: string){
@@ -35,6 +37,7 @@ export function AlertsProvider(children: any) {
     }
 
     function addAlert(msg: JSX.Element, style: string, callback: (id: string) => {}) {
+        console.log("add alert triggered");
         let id = uuidv4();
         let newTimeout = setTimeout(clearAlert, timeoutMilliseconds, id);
         let newAlert = {
@@ -44,7 +47,9 @@ export function AlertsProvider(children: any) {
             callback: callback,
             timeout: newTimeout
         } as AppAlert;
-        setCurrentAlerts([newAlert, ...currentAlerts]);
+        let test = [...currentAlerts, newAlert];
+        setCurrentAlerts(test);
+        console.log("current alerts", currentAlerts);
     }
 
     let test = {
@@ -54,6 +59,6 @@ export function AlertsProvider(children: any) {
     } as AlertContext;
 
     return (<AlertsContext.Provider value={test}>
-        {children}
+        { props.children }
     </AlertsContext.Provider>);
 }

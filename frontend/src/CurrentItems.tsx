@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, Button, Container, Stack, Table } from 'react-bootstrap';
+import React, { useContext, useState, useEffect } from 'react';
+import { Button, Container, Stack } from 'react-bootstrap';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import { GlobalProps, Task } from './GlobalProps';
 import AppNavigation, { AppNavigationProps } from './AppNavigation';
-
+import { AlertsContext } from './Alerts';
 
 export interface CurrentTask extends Task {
     count: number;
@@ -23,6 +23,8 @@ function CurrentItems(props: CurrentItemsProps) {
     const [lastMarkedId, setLastMarkedId] = useState<number>();
     const [undoSuccessTimeout, setUndoSuccessTimeout] = useState<NodeJS.Timeout>();
     const [dueDate, setDueDate] = useState<Date>();
+
+    const alertsContext = useContext(AlertsContext);
 
     useEffect(() => {
         fetchCurrentItems();
@@ -90,7 +92,7 @@ function CurrentItems(props: CurrentItemsProps) {
         }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} fetching current items for view ${props.selectedView}: ${resp.statusText}`);
-                props.global.showErrorAlert("Error fetching items.");
+                alertsContext.addAlert("Error fetching items.", "danger");
                 return undefined;
             } else {
                 return resp.json();
@@ -99,7 +101,7 @@ function CurrentItems(props: CurrentItemsProps) {
             if(data !== undefined){
                 var due = new Date(data.DueDate);
                 if(isNaN(due.getTime())){
-                    props.global.showErrorAlert("Invalid due date.");
+                    alertsContext.addAlert("Invalid due date", "danger");
                 }
 
                 setItems(data.Items);
@@ -108,7 +110,7 @@ function CurrentItems(props: CurrentItemsProps) {
             }
         }).catch(err => {
             console.log(`Error fetching current items for view ${props.selectedView}: ${err}`);
-            props.global.showErrorAlert("Error fetching items.");
+            alertsContext.addAlert("Error fetching items.", "danger");
         });
     }
 
