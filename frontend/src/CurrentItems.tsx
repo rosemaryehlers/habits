@@ -1,10 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Container, Stack } from 'react-bootstrap';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import { GlobalProps, Task } from './GlobalProps';
 import AppNavigation, { AppNavigationProps } from './AppNavigation';
-import { AlertsContext } from './Alerts';
 
 export interface CurrentTask extends Task {
     count: number;
@@ -23,8 +22,6 @@ function CurrentItems(props: CurrentItemsProps) {
     const [lastMarkedId, setLastMarkedId] = useState<number>();
     const [undoSuccessTimeout, setUndoSuccessTimeout] = useState<NodeJS.Timeout>();
     const [dueDate, setDueDate] = useState<Date>();
-
-    const alertsContext = useContext(AlertsContext);
 
     useEffect(() => {
         fetchCurrentItems();
@@ -92,7 +89,7 @@ function CurrentItems(props: CurrentItemsProps) {
         }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} fetching current items for view ${props.selectedView}: ${resp.statusText}`);
-                alertsContext.addAlert("Error fetching items.", "danger");
+                props.global.addAlert("Error fetching items.", "danger");
                 return undefined;
             } else {
                 return resp.json();
@@ -101,7 +98,7 @@ function CurrentItems(props: CurrentItemsProps) {
             if(data !== undefined){
                 var due = new Date(data.DueDate);
                 if(isNaN(due.getTime())){
-                    alertsContext.addAlert("Invalid due date", "danger");
+                    props.global.addAlert("Invalid due date", "danger");
                 }
 
                 setItems(data.Items);
@@ -110,7 +107,7 @@ function CurrentItems(props: CurrentItemsProps) {
             }
         }).catch(err => {
             console.log(`Error fetching current items for view ${props.selectedView}: ${err}`);
-            alertsContext.addAlert("Error fetching items.", "danger");
+            props.global.addAlert("Error fetching items.", "danger");
         });
     }
 
@@ -118,7 +115,7 @@ function CurrentItems(props: CurrentItemsProps) {
         let itemId = parseInt(e.currentTarget.id, 10);
 
         if(isNaN(itemId)){
-            props.global.showErrorAlert("Invalid id, could not mark item.");
+            props.global.addAlert("Invalid id, could not mark item.", "danger");
             e.preventDefault();
             return;
         }
@@ -137,14 +134,14 @@ function CurrentItems(props: CurrentItemsProps) {
         }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} marking item ${itemId}: ${resp.statusText}`);
-                props.global.showErrorAlert("Error marking item.");
+                props.global.addAlert("Error marking item.", "danger");
             } else {
                 // marked successfully, give option to undo
                 showUndoAlert(itemId);
             }
         }).catch(err => {
             console.log("Ya done ducked up", err);
-            props.global.showErrorAlert("Error marking item.");
+            props.global.addAlert("Error marking item.", "danger");
         });
     }
     function onUnMarkItem(e: any){
@@ -167,13 +164,13 @@ function CurrentItems(props: CurrentItemsProps) {
         }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} undoing item ${lastMarkedId}: ${resp.statusText}`);
-                props.global.showErrorAlert("Error undoing item.");
+                props.global.addAlert("Error undoing item.", "danger");
             } else {
                 showUndoSuccessAlert();
             }
         }).catch(err => {
             console.log("Ya done ducked up", err);
-            props.global.showErrorAlert("Error undoing item.");
+            props.global.addAlert("Error undoing item.", "danger");
         });
     }
 

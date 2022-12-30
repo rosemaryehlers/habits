@@ -36,7 +36,7 @@ function History(props: HistoryProps){
         fetch(url, { method: "GET" }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} fetching history for view ${props.selectedView}: ${resp.statusText}`);
-                props.global.showErrorAlert("Error fetching history");
+                props.global.addAlert("Error fetching history", "danger");
                 return undefined;
             } else {
                 return resp.json();
@@ -47,7 +47,7 @@ function History(props: HistoryProps){
             }
         }).catch(err => {
             console.log(`Error fetching history for view ${props.selectedView}: ${err}`);
-            props.global.showErrorAlert("Error fetching history");
+            props.global.addAlert("Error fetching history", "danger");
         });
     }, [props.selectedView]);
 

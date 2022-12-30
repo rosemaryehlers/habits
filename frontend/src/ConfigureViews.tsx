@@ -38,7 +38,7 @@ function ConfigureViews(props: GlobalProps) {
         }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} fetching tasks: ${resp.statusText}`);
-                props.global.showErrorAlert("Error fetching tasks.");
+                props.global.addAlert("Error fetching tasks.", "danger");
                 return undefined;
             } else {
                 return resp.json();
@@ -52,7 +52,7 @@ function ConfigureViews(props: GlobalProps) {
             }
         }).catch(err => {
             console.log(`Error fetching tasks: ${err}`);
-            props.global.showErrorAlert("Error fetching tasks.");
+            props.global.addAlert("Error fetching tasks.", "danger");
         });
     }
     function fetchCurrentTasks(){
@@ -70,7 +70,7 @@ function ConfigureViews(props: GlobalProps) {
         }).then(resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} fetching current items for view ${selectedView}: ${resp.statusText}`);
-                props.global.showErrorAlert("Error fetching items.");
+                props.global.addAlert("Error fetching items.", "danger");
                 return undefined;
             } else {
                 return resp.json();
@@ -79,7 +79,7 @@ function ConfigureViews(props: GlobalProps) {
             setCurrentTaskIds(data.Items.map((item: Task) => item.id));
         }).catch(err => {
             console.log(`Error fetching current items for view ${selectedView}: ${err}`);
-            props.global.showErrorAlert("Error fetching items.");
+            props.global.addAlert("Error fetching items.", "danger");
         });
     }
     function loadSelectedView(){
@@ -107,11 +107,11 @@ function ConfigureViews(props: GlobalProps) {
     }
     function addTask(){
         if(addTaskSelectedId === undefined) {
-            props.global.showErrorAlert("No task selected");
+            props.global.addAlert("No task selected", "danger");
             return;
         }
         if(selectedView === undefined) {
-            props.global.showErrorAlert("No view selected");
+            props.global.addAlert("No view selected", "danger");
             return;
         }
 
@@ -129,11 +129,11 @@ function ConfigureViews(props: GlobalProps) {
         }).then( resp => {
             if(!resp.ok){
                 console.log(`Error ${resp.status} adding task ${addTaskSelectedId} to view ${selectedView}: ${resp.statusText}`);
-                props.global.showErrorAlert("Error adding task.");
+                props.global.addAlert("Error adding task.", "danger");
             }
         }).catch(err => {
             console.log(`Error adding task ${addTaskSelectedId} to view ${selectedView}`, err);
-            props.global.showErrorAlert("Error adding task.");
+            props.global.addAlert("Error adding task.", "danger");
         }).finally(() => {
             loadSelectedView();
         });

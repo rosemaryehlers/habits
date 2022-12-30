@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface GlobalProps {
     global: {
         baseUrl: string;
@@ -6,8 +8,8 @@ export interface GlobalProps {
         modes: Array<string>;
         alert: JSX.Element|undefined;
         onSelectedModeChange(mode: string): any;
-        showErrorAlert(msg: string) : any;
         changeHeaderText: React.Dispatch<React.SetStateAction<JSX.Element | undefined>>;
+        addAlert: (msg: React.ReactNode, style: string, callback?: (id: string) => void) => void;
     }
 }
 

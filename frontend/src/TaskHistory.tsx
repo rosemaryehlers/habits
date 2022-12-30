@@ -42,7 +42,7 @@ function TaskHistory(props: TaskHistoryProps) {
             return resp.json();
         }).then(data => {
             if(data === undefined){
-                props.global.showErrorAlert("Error fetching history for item.");
+                props.global.addAlert("Error fetching history for item.", "danger");
                 setState(undefined);
                 return;
             }
@@ -65,7 +65,7 @@ function TaskHistory(props: TaskHistoryProps) {
         }).catch(err => {
             console.log(`Error fetching history for item ${props.itemId}: ${err}`);
             setState(undefined);
-            props.global.showErrorAlert("Error fetching history for item.");
+            props.global.addAlert("Error fetching history for item.", "danger");
         });
     }, [props.itemId]);
 
@@ -79,7 +79,7 @@ function TaskHistory(props: TaskHistoryProps) {
 
     function renderEntrySuccess(entry: Entry){
         if(state === undefined || state.itemMetadata === undefined){
-            props.global.showErrorAlert("No item metadata!");
+            props.global.addAlert("No item metadata!", "danger");
             return;
         }
 
@@ -88,7 +88,7 @@ function TaskHistory(props: TaskHistoryProps) {
         }
         else if(state.itemMetadata.type === "finite"){
             if(state.itemMetadata.goal === undefined){
-                props.global.showErrorAlert("No goal for finite item type.");
+                props.global.addAlert("No goal for finite item type.", "danger");
                 return;
             }
 
@@ -96,7 +96,7 @@ function TaskHistory(props: TaskHistoryProps) {
             return (<span className={color}>{entry.count} / {state.itemMetadata.goal}</span>);
         }
 
-        props.global.showErrorAlert("Unknown item type " + state.itemMetadata.type);
+        props.global.addAlert("Unknown item type " + state.itemMetadata.type, "danger");
         return;
     }
 

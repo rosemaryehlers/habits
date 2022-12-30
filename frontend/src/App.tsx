@@ -6,7 +6,8 @@ import { GlobalProps } from './GlobalProps';
 import History, { HistoryProps } from './History';
 import Configure from './Configure';
 import { AppNavigationProps } from './AppNavigation';
-import { AlertsContext, AlertsProvider, AppAlert } from './Alerts';
+import { AppAlert } from './Alerts';
+import { v4 as uuidv4 } from 'uuid';
 
 interface AppProps {
   baseUrl: string,
@@ -37,7 +38,7 @@ function App(props: AppProps){
         fetch(url, { "method": "GET" }).then( resp => {
             if(!resp.ok){
               console.log(`Error ${resp.status} fetching views: ${resp.statusText}`);
-              showErrorAlert("Error fetching views.");
+              addAlert("Error fetching views.", "danger");
               return;
             }
 
@@ -52,7 +53,7 @@ function App(props: AppProps){
             setSelectedView(data.defaultView);
         }).catch(err => {
             console.log(`Error fetching views: ${err}`);
-            showErrorAlert("Error fetching views.");
+            addAlert("Error fetching views.", "danger");
         });
     }, [props.baseUrl, props.port]);
 
@@ -63,23 +64,31 @@ function App(props: AppProps){
       setSelectedMode(newMode);
     }
 
-    function dismissErrorAlert(){
-        if(error !== undefined && error.timeout !== undefined){
-            clearTimeout(error.timeout);
-        }
-
-        setError(undefined);
-    }
-    function showErrorAlert(msg: string){
-        if (error !== undefined && error.timeout !== undefined){
-            clearTimeout(error.timeout);
-        }
-
-        let timeout = setTimeout(dismissErrorAlert, timeoutMilliseconds);
-        setError({
+    function addAlert(msg: React.ReactNode, style: string, callback?: (id: string) => {}) {
+      console.log("add alert triggered", currentAlerts);
+      let id = uuidv4();
+      let newTimeout = setTimeout(clearAlert, timeoutMilliseconds, id);
+      let newAlert = {
+          id: id,
           msg: msg,
-          timeout: timeout
-        });
+          style: style,
+          callback: callback,
+          timeout: newTimeout
+      } as AppAlert;
+      let test = [...currentAlerts, newAlert];
+      console.log("after add alert", test);
+      setCurrentAlerts(test);
+    }
+    function clearAlert(id: string){
+      console.log("clear alert triggered", currentAlerts);
+      let timeout = currentAlerts.find(t => t.id === id)?.timeout;
+      if(timeout){
+          clearTimeout(timeout);
+      }
+
+      let newCurrent = currentAlerts.filter(t => t.id != id);
+      console.log("after clear alert", newCurrent);
+      setCurrentAlerts(newCurrent);
     }
 
     let globalProps = {
@@ -88,9 +97,9 @@ function App(props: AppProps){
         port: props.port,
         views: views,
         modes: modes,
-        showErrorAlert: showErrorAlert,
         onSelectedModeChange: onModeChange,
-        changeHeaderText: setHeaderText
+        changeHeaderText: setHeaderText,
+        addAlert: addAlert
       }
     } as GlobalProps;
     let appNavProps = {
@@ -111,11 +120,8 @@ function App(props: AppProps){
       selectedView: selectedView
     } as HistoryProps;
 
-    const alertsContext = useContext(AlertsContext);
-
-    console.log("render app", alertsContext.alerts);
     return (
-      <AlertsProvider currentAlerts={currentAlerts} setCurrentAlerts={setCurrentAlerts}>
+      <>
           <div className={ "app-container " + (error !== undefined ? "err" : "") } >
               { selectedMode === "Current" &&
                 <CurrentItems {...currentItemsProps} />
@@ -129,19 +135,14 @@ function App(props: AppProps){
           </div>
           <div className="footer-container">
               {
-                alertsContext.alerts.map(a => (
+                currentAlerts.map(a => (
                   <Alert variant={a.style} dismissible transition={false} onClose={a.callback}>
                     {a.msg}
                   </Alert>
                 ))
               }
-              {/*<Alert variant="danger" dismissible transition={false}
-                  show={ error !== undefined }
-                  onClose={ dismissErrorAlert }>
-                  <span>{ error?.msg }</span>
-            </Alert>*/}
           </div>
-      </AlertsProvider>
+      </>
     );
 }
 
