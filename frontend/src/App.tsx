@@ -6,7 +6,7 @@ import { GlobalProps } from './GlobalProps';
 import History, { HistoryProps } from './History';
 import Configure from './Configure';
 import { AppNavigationProps } from './AppNavigation';
-import { AlertsContext, AlertsProvider } from './Alerts';
+import { AlertsContext, AlertsProvider, AppAlert } from './Alerts';
 
 interface AppProps {
   baseUrl: string,
@@ -27,6 +27,7 @@ function App(props: AppProps){
     const [selectedView, setSelectedView] = useState<string | undefined>();
     const [defaultView, setDefaultView] = useState<string | undefined>();
     const [headerText, setHeaderText] = useState<JSX.Element | undefined>();
+    const [currentAlerts, setCurrentAlerts] = useState<Array<AppAlert>>([]);
 
     // initialize app
     useEffect(() => {
@@ -114,7 +115,7 @@ function App(props: AppProps){
 
     console.log("render app", alertsContext.alerts);
     return (
-      <AlertsProvider>
+      <AlertsProvider currentAlerts={currentAlerts} setCurrentAlerts={setCurrentAlerts}>
           <div className={ "app-container " + (error !== undefined ? "err" : "") } >
               { selectedMode === "Current" &&
                 <CurrentItems {...currentItemsProps} />

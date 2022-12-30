@@ -1,5 +1,4 @@
 import React, { useState, createContext } from 'react';
-import { AlertProps } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface AppAlert {
@@ -14,7 +13,11 @@ export interface AlertContext {
     addAlert: (msg: React.ReactNode, style: string, callback?: (id: string) => {}) => void,
     clearAlert: (id: string) => void
 }
-interface AlertsProps {} 
+interface AlertsProps {
+    currentAlerts: Array<AppAlert>,
+    setCurrentAlerts: (alerts: Array<AppAlert>) => void,
+    children: React.ReactNode
+}
 
 const timeoutMilliseconds = 10000;
 export const AlertsContext = createContext<AlertContext>({
@@ -23,17 +26,16 @@ export const AlertsContext = createContext<AlertContext>({
     clearAlert: (id: string) => { console.log("Well fuck"); }
 });
 
-export function AlertsProvider(props: AlertProps) {
-    const [currentAlerts, setCurrentAlerts] = useState<Array<AppAlert>>([]);
+export function AlertsProvider(props: AlertsProps) {
 
     function clearAlert(id: string){
-        let timeout = currentAlerts.find(t => t.id === id)?.timeout;
+        let timeout = props.currentAlerts.find(t => t.id === id)?.timeout;
         if(timeout){
             clearTimeout(timeout);
         }
 
-        let newCurrent = currentAlerts.filter(t => t.id != id);
-        setCurrentAlerts(newCurrent);
+        let newCurrent = props.currentAlerts.filter(t => t.id != id);
+        props.setCurrentAlerts(newCurrent);
     }
 
     function addAlert(msg: JSX.Element, style: string, callback: (id: string) => {}) {
@@ -47,13 +49,14 @@ export function AlertsProvider(props: AlertProps) {
             callback: callback,
             timeout: newTimeout
         } as AppAlert;
-        let test = [...currentAlerts, newAlert];
-        setCurrentAlerts(test);
-        console.log("current alerts", currentAlerts);
+        let test = [...props.currentAlerts, newAlert];
+        console.log(test);
+        props.setCurrentAlerts(test);
+        console.log("current alerts", props.currentAlerts);
     }
 
     let test = {
-        alerts: currentAlerts,
+        alerts: props.currentAlerts,
         addAlert: addAlert,
         clearAlert: clearAlert
     } as AlertContext;
