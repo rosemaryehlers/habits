@@ -65,7 +65,6 @@ function App(props: AppProps){
     }
 
     function addAlert(msg: React.ReactNode, style: string, callback?: (id: string) => {}) {
-      console.log("add alert triggered", currentAlerts);
       let id = uuidv4();
       let newTimeout = setTimeout(clearAlert, timeoutMilliseconds, id);
       let newAlert = {
@@ -75,20 +74,15 @@ function App(props: AppProps){
           callback: callback,
           timeout: newTimeout
       } as AppAlert;
-      let test = [...currentAlerts, newAlert];
-      console.log("after add alert", test);
-      setCurrentAlerts(test);
+      setCurrentAlerts(currentAlerts => [...currentAlerts, newAlert]);
     }
     function clearAlert(id: string){
-      console.log("clear alert triggered", currentAlerts);
       let timeout = currentAlerts.find(t => t.id === id)?.timeout;
       if(timeout){
           clearTimeout(timeout);
       }
 
-      let newCurrent = currentAlerts.filter(t => t.id != id);
-      console.log("after clear alert", newCurrent);
-      setCurrentAlerts(newCurrent);
+      setCurrentAlerts(currentAlerts => currentAlerts.filter(t => t.id != id));
     }
 
     let globalProps = {
@@ -136,7 +130,7 @@ function App(props: AppProps){
           <div className="footer-container">
               {
                 currentAlerts.map(a => (
-                  <Alert variant={a.style} dismissible transition={false} onClose={a.callback}>
+                  <Alert variant={a.style} dismissible transition={false} onClose={a.callback} key={a.id} id={a.id}>
                     {a.msg}
                   </Alert>
                 ))

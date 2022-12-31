@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Container, Stack } from 'react-bootstrap';
+import { Alert, Button, Container, Stack } from 'react-bootstrap';
 import './CurrentItems.css';
 import iconcheck from 'bootstrap-icons/icons/check.svg';
 import { GlobalProps, Task } from './GlobalProps';
@@ -12,15 +12,10 @@ export interface CurrentItemsProps extends AppNavigationProps, GlobalProps {
     selectedView?: string;
 }
 
-const timeoutMilliseconds = 5000;
 const markItemUrl = "/mark-item";
 
 function CurrentItems(props: CurrentItemsProps) {
     const [items, setItems] = useState<Array<CurrentTask>>([]);
-    const [showUndoSuccess, setShowUndoSuccess] = useState(false);
-    const [undoTimeout, setUndoTimeout] = useState<NodeJS.Timeout>();
-    const [lastMarkedId, setLastMarkedId] = useState<number>();
-    const [undoSuccessTimeout, setUndoSuccessTimeout] = useState<NodeJS.Timeout>();
     const [dueDate, setDueDate] = useState<Date>();
 
     useEffect(() => {
@@ -36,42 +31,6 @@ function CurrentItems(props: CurrentItemsProps) {
         var due = formatDueDate(dueDate);
         props.global.changeHeaderText(<span><b>Due:</b>&nbsp;{due}</span>);
     }, [dueDate]);
-
-    function showUndoAlert(itemId: number){
-        if(undoTimeout !== undefined){
-            clearTimeout(undoTimeout);
-        }
-
-        var timeout = setTimeout(dismissUndoAlert, timeoutMilliseconds);
-        setUndoTimeout(timeout);
-        setLastMarkedId(itemId);
-    }
-    function dismissUndoAlert(){
-        if(undoTimeout){
-            clearTimeout(undoTimeout);
-        }
-
-        setUndoTimeout(undefined);
-        setLastMarkedId(undefined);
-    }
-    function showUndoSuccessAlert(){
-        if(undoSuccessTimeout !== undefined){
-            clearTimeout(undoSuccessTimeout);
-        }
-
-        var timeout = setTimeout(dismissUndoSuccessAlert, timeoutMilliseconds);
-        setShowUndoSuccess(true);
-        setUndoSuccessTimeout(timeout);
-        setLastMarkedId(undefined);
-    }
-    function dismissUndoSuccessAlert(){
-        if(undoSuccessTimeout !== undefined){
-            clearTimeout(undoSuccessTimeout);
-        }
-
-        setShowUndoSuccess(false);
-        setUndoSuccessTimeout(undefined);
-    }
 
     function fetchCurrentItems(){
         if(props.selectedView === undefined || props.selectedView === null || props.selectedView === ""){
@@ -103,7 +62,6 @@ function CurrentItems(props: CurrentItemsProps) {
 
                 setItems(data.Items);
                 setDueDate(isNaN(due.getTime()) ? undefined : due);
-                setLastMarkedId(undefined);
             }
         }).catch(err => {
             console.log(`Error fetching current items for view ${props.selectedView}: ${err}`);
@@ -111,7 +69,7 @@ function CurrentItems(props: CurrentItemsProps) {
         });
     }
 
-    function onMarkItem(e: any){
+    const onMarkItem = (e: any) =>{
         let itemId = parseInt(e.currentTarget.id, 10);
 
         if(isNaN(itemId)){
@@ -137,25 +95,23 @@ function CurrentItems(props: CurrentItemsProps) {
                 props.global.addAlert("Error marking item.", "danger");
             } else {
                 // marked successfully, give option to undo
-                showUndoAlert(itemId);
+                props.global.addAlert(<>
+                    <span>You did it! &nbsp;</span>
+                    <Alert.Link onClick={ () => { onUnMarkItem(itemId); } }>Undo</Alert.Link>
+                </>, "success");
             }
         }).catch(err => {
             console.log("Ya done ducked up", err);
             props.global.addAlert("Error marking item.", "danger");
         });
     }
-    function onUnMarkItem(e: any){
-        if(lastMarkedId === undefined){
-            // might just be a double click, don't show error
-            e.preventDefault();
-            return;
-        }
-
+    function onUnMarkItem(id: number){
+        console.log("onUnMarkItem", id);
         var url = props.global.baseUrl
             + ":" + props.global.port
             + markItemUrl;
         let data = {
-            id: lastMarkedId,
+            id: id,
             action: "undo"
         };
         fetch(url, {
@@ -163,10 +119,10 @@ function CurrentItems(props: CurrentItemsProps) {
             body: JSON.stringify(data)
         }).then(resp => {
             if(!resp.ok){
-                console.log(`Error ${resp.status} undoing item ${lastMarkedId}: ${resp.statusText}`);
+                console.log(`Error ${resp.status} undoing item ${id}: ${resp.statusText}`);
                 props.global.addAlert("Error undoing item.", "danger");
             } else {
-                showUndoSuccessAlert();
+                //showUndoSuccessAlert();
             }
         }).catch(err => {
             console.log("Ya done ducked up", err);
