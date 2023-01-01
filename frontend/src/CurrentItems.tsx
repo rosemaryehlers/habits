@@ -95,10 +95,10 @@ function CurrentItems(props: CurrentItemsProps) {
                 props.global.addAlert("Error marking item.", "danger");
             } else {
                 // marked successfully, give option to undo
-                props.global.addAlert(<>
+                props.global.addAlert((id: string) => (<>
                     <span>You did it! &nbsp;</span>
-                    <Alert.Link onClick={ () => { onUnMarkItem(itemId); } }>Undo</Alert.Link>
-                </>, "success");
+                    <Alert.Link onClick={ () => { onUnMarkItem(itemId); props.global.clearAlert(id); } }>Undo</Alert.Link>
+                </>), "success");
             }
         }).catch(err => {
             console.log("Ya done ducked up", err);
@@ -122,7 +122,7 @@ function CurrentItems(props: CurrentItemsProps) {
                 console.log(`Error ${resp.status} undoing item ${id}: ${resp.statusText}`);
                 props.global.addAlert("Error undoing item.", "danger");
             } else {
-                //showUndoSuccessAlert();
+                props.global.addAlert("Success!", "success");
             }
         }).catch(err => {
             console.log("Ya done ducked up", err);

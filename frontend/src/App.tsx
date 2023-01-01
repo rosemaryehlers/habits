@@ -64,14 +64,14 @@ function App(props: AppProps){
       setSelectedMode(newMode);
     }
 
-    function addAlert(msg: React.ReactNode, style: string, callback?: (id: string) => {}) {
+    function addAlert(msg: React.ReactNode | ((id: string) => React.ReactNode), style: string) {
       let id = uuidv4();
       let newTimeout = setTimeout(clearAlert, timeoutMilliseconds, id);
+      const message = typeof msg === "function" ? msg(id) : msg;
       let newAlert = {
           id: id,
-          msg: msg,
+          msg: message,
           style: style,
-          callback: callback,
           timeout: newTimeout
       } as AppAlert;
       setCurrentAlerts(currentAlerts => [...currentAlerts, newAlert]);
@@ -93,7 +93,8 @@ function App(props: AppProps){
         modes: modes,
         onSelectedModeChange: onModeChange,
         changeHeaderText: setHeaderText,
-        addAlert: addAlert
+        addAlert: addAlert,
+        clearAlert: clearAlert
       }
     } as GlobalProps;
     let appNavProps = {

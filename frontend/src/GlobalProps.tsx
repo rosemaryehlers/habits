@@ -9,7 +9,8 @@ export interface GlobalProps {
         alert: JSX.Element|undefined;
         onSelectedModeChange(mode: string): any;
         changeHeaderText: React.Dispatch<React.SetStateAction<JSX.Element | undefined>>;
-        addAlert: (msg: React.ReactNode, style: string, callback?: (id: string) => void) => void;
+        addAlert: (msg: React.ReactNode | ((id: string) => React.ReactNode), style: string, callback?: (id: string) => void) => void;
+        clearAlert: (id: string) => void;
     }
 }
 
