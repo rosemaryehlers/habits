@@ -5,6 +5,7 @@ import './Configure.css';
 import iconback from 'bootstrap-icons/icons/arrow-left.svg';
 import { GlobalProps } from './GlobalProps';
 import ConfigureViews from './ConfigureViews';
+import ConfigureTasks from './ConfigureTasks';
 
 function Configure(props: GlobalProps) {
     const [selectedAction, setSelectedAction] = useState("Views");
@@ -40,7 +41,7 @@ function Configure(props: GlobalProps) {
                     <ConfigureViews {...props} />
                 }
                 { selectedAction === "Tasks" &&
-                    <div>Configure tasks</div>
+                    <ConfigureTasks {...props} />
                 }
             </>
         </>

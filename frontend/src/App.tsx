@@ -61,6 +61,7 @@ function App(props: AppProps){
       setSelectedView(newView);
     }
     function onModeChange(newMode: string) {
+      currentAlerts.map(a => clearAlert(a.id));
       setSelectedMode(newMode);
     }
 
@@ -131,7 +132,7 @@ function App(props: AppProps){
           <div className="footer-container">
               {
                 currentAlerts.map(a => (
-                  <Alert variant={a.style} dismissible transition={false} onClose={a.callback} key={a.id} id={a.id}>
+                  <Alert variant={a.style} dismissible transition={false} onClose={ () => {clearAlert(a.id);} } key={a.id} id={a.id}>
                     {a.msg}
                   </Alert>
                 ))

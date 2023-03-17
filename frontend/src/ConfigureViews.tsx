@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Container, Stack, Table } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 import Select, { SelectInstance } from 'react-select';
 import { GlobalProps, Task } from './GlobalProps';
 import iconplus from 'bootstrap-icons/icons/plus-lg.svg'
@@ -21,6 +21,22 @@ function ConfigureViews(props: GlobalProps) {
     useEffect(() => {
         loadSelectedView();
     }, [selectedView]);
+
+    useEffect(() => {
+        // calculate available tasks
+        let unsorted = new Array<Task>();
+        allTaskList.forEach((v: Task, k: number) => {
+            if(!currentTaskIds.includes(v.id)){
+                unsorted.push(v);
+            }
+        });
+        unsorted.sort((a: Task, b: Task) => {
+            if(a.name > b.name) return 1;
+            if(b.name > a.name) return -1;
+            return 0;
+        });
+        setAvailableTasks(unsorted);
+    }, [currentTaskIds]);
 
     function fetchTasks(forceLoad: boolean = false){
         if(!forceLoad && allTaskList.keys.length > 0){
@@ -88,20 +104,6 @@ function ConfigureViews(props: GlobalProps) {
         }
 
         fetchCurrentTasks();
-
-        // calculate available tasks
-        let unsorted = new Array<Task>();
-        allTaskList.forEach((v: Task, k: number) => {
-            if(!currentTaskIds.includes(v.id)){
-                unsorted.push(v);
-            }
-        });
-        unsorted.sort((a: Task, b: Task) => {
-            if(a.name > b.name) return 1;
-            if(b.name > a.name) return -1;
-            return 0;
-        });
-        setAvailableTasks(unsorted);
         const addTaskSelect = addTaskSelectRef.current;
         addTaskSelect?.clearValue();
     }
@@ -150,6 +152,16 @@ function ConfigureViews(props: GlobalProps) {
         fetch(url, {
             method: "POST",
             body: JSON.stringify(data)
+        }).then( resp => {
+            if(!resp.ok){
+                console.log(`Error ${resp.status} removing task ${id} from view ${selectedView}`)
+                props.global.addAlert("Error removing task.", "danger");
+            }
+        }).catch(err => {
+            console.log(`Error removing task ${id} from view ${selectedView}`, err);
+            props.global.addAlert("Error removing task.", "danger");
+        }).finally(() => {
+            loadSelectedView();
         });
     }
 
@@ -173,7 +185,7 @@ function ConfigureViews(props: GlobalProps) {
     });
 
     return (
-        <Container fluid className="configure-tasks-container content-container">
+        <Container fluid className="configure-container content-container">
             <div className="label">View</div>
             <div className="center">
                 <Select options={editViewsOptions} onChange={ (e: any) => { setSelectedView(e.value); } } placeholder="Select View" />

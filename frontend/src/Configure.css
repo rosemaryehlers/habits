@@ -1,4 +1,4 @@
-.configure-tasks-container {
+.configure-container {
     display: grid;
     grid-template-columns: max-content max-content max-content;
     gap: 10px;
@@ -7,8 +7,8 @@
     justify-content: start;
 }
 
-.configure-tasks-container .label,
-.configure-tasks-container .center,
-.configure-tasks-container .icon {
+.configure-container .label,
+.configure-container .center,
+.configure-container .icon {
     align-self: center;
 }
