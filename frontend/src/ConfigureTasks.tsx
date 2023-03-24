@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Container, Form } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Button, ButtonGroup, Container, Form, InputGroup, Modal } from 'react-bootstrap';
+import Select, { SelectInstance } from 'react-select';
 import { GlobalProps, Task } from './GlobalProps';
 import iconpencil from 'bootstrap-icons/icons/pencil-square.svg';
 import icontrash from 'bootstrap-icons/icons/trash.svg';
@@ -8,6 +9,8 @@ function ConfigureTasks(props: GlobalProps) {
     const [tasks, setTasks] = useState<Map<number, Task>>(new Map<number, Task>());
     const [filteredTaskIds, setFilteredTaskIds] = useState<Array<number>>([]);
     const [filterText, setFilterText] = useState("");
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [createTaskType, setCreateTaskType] = useState("infinite");
 
     // one time init
     useEffect(() => {
@@ -63,6 +66,26 @@ function ConfigureTasks(props: GlobalProps) {
         }
     }
 
+    function onCloseCreateModal(){
+        // clear all inputs
+        if(showCreateModal){
+            setShowCreateModal(false);
+        }
+    }
+    function onCreateSubmit(e: any){
+        const form = e.currentTarget;
+        console.log("create task submit", form);
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    function validateNumericKeypress(e: any) {
+        const key = e.key;
+        console.log("validate numeric", isNaN(key));
+        if(isNaN(key)){
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }
 
     function whichTasks(){
         if(filterText.length > 2 && filteredTaskIds.length > 0) {
@@ -99,12 +122,16 @@ function ConfigureTasks(props: GlobalProps) {
         );
     }
 
+    const createTaskSelectOptions = [
+        { "value": "finite", "label": "Count"},
+        { "value": "infinite", "label": "Endless"}
+    ];
     return (
         <Container fluid className="configure-container content-container">
             <>
                 <div className="label"></div>
                 <div className="center">
-                    <Button variant="success" size="sm">Create Task</Button>{' '}
+                    <Button variant="success" size="sm" onClick={() => setShowCreateModal(true) }>Create Task</Button>{' '}
                 </div>
                 <div className="icon"></div>
                 <div className="label"></div>
@@ -113,6 +140,35 @@ function ConfigureTasks(props: GlobalProps) {
                 </div>
                 <div className="icon"></div>
                 { whichTasks() }
+
+                <Modal show={showCreateModal} onHide={onCloseCreateModal} size="sm" >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Create Task</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form noValidate id="createForm" onSubmit={e => onCreateSubmit(e) }>
+                            <InputGroup>
+                                <InputGroup.Text>Name</InputGroup.Text>
+                                <Form.Control type="text" maxLength={20}/>
+                            </InputGroup>
+                            <InputGroup className="input-group">
+                                <InputGroup.Text>Type</InputGroup.Text>
+                                <Button onClick={ () => setCreateTaskType("infinite") } variant={ createTaskType === "infinite" ? "secondary" : "outline-secondary" } size="sm">Endless</Button>
+                                <Button onClick={ () => setCreateTaskType("finite") } variant={ createTaskType === "finite" ? "secondary" : "outline-secondary" } size="sm">Count</Button>
+                            </InputGroup>
+                            { createTaskType === "finite" &&
+                                <InputGroup onKeyDown={ e => validateNumericKeypress(e) }>
+                                    <InputGroup.Text>Goal</InputGroup.Text>
+                                    <Form.Control id="taskGoal" type="number" />
+                                </InputGroup>
+                            }
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" form="createForm" type="submit">Create</Button>{' '}
+                        <Button variant="secondary" onClick={onCloseCreateModal}>Cancel</Button>{' '}
+                    </Modal.Footer>
+                </Modal>
             </>
         </Container>
     );

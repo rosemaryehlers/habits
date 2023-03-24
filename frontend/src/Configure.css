@@ -12,3 +12,7 @@
 .configure-container .icon {
     align-self: center;
 }
+
+.modal-content .input-group:not(:first-child) {
+    margin-top: var(--bs-modal-padding);
+}
