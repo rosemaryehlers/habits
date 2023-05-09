@@ -1,16 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Button, ButtonGroup, Container, Form, InputGroup, Modal } from 'react-bootstrap';
-import Select, { SelectInstance } from 'react-select';
+import { Alert, Button, Container, Form, InputGroup, Modal } from 'react-bootstrap';
 import { GlobalProps, Task } from './GlobalProps';
 import iconpencil from 'bootstrap-icons/icons/pencil-square.svg';
 import icontrash from 'bootstrap-icons/icons/trash.svg';
+import { AppAlert } from './Alerts';
+import { v4 as uuidv4 } from 'uuid';
+
+type StringDict = { [key: string] : any }
+const defaultCreateTaskFields : StringDict = {
+    "name": "",
+    "type": "infinite",
+    "count": ""
+};
+
+const timeoutMilliseconds = 5000;
 
 function ConfigureTasks(props: GlobalProps) {
     const [tasks, setTasks] = useState<Map<number, Task>>(new Map<number, Task>());
     const [filteredTaskIds, setFilteredTaskIds] = useState<Array<number>>([]);
     const [filterText, setFilterText] = useState("");
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [createTaskType, setCreateTaskType] = useState("infinite");
+    const [createTaskFields, setCreateTaskFields] = useState(defaultCreateTaskFields);
+    const [createTaskError, setCreateTaskError] = useState<AppAlert|null>(null);
 
     // one time init
     useEffect(() => {
@@ -67,24 +78,62 @@ function ConfigureTasks(props: GlobalProps) {
     }
 
     function onCloseCreateModal(){
-        // clear all inputs
+        var newState = {...defaultCreateTaskFields};
+        setCreateTaskFields(newState);
+        if(createTaskError) {
+            clearCreateTaskAlert(createTaskError.id);
+        }
         if(showCreateModal){
             setShowCreateModal(false);
         }
     }
     function onCreateSubmit(e: any){
-        const form = e.currentTarget;
-        console.log("create task submit", form);
+        console.log("create task submit", createTaskFields);
         e.preventDefault();
         e.stopPropagation();
+
+        const createTaskPath = "/create-task";
+
+        var url = props.global.baseUrl 
+        + ":" + props.global.port 
+        + createTaskPath;
+        var data = {...createTaskFields};
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify(data)
+        }).then( resp => {
+            if(!resp.ok){
+                console.log(`Error ${resp.status} creating task ${data.name}: ${resp.statusText}`);
+                createCreateTaskAlert();
+            } else {
+                // clear form
+                var newState = {...defaultCreateTaskFields};
+                setCreateTaskFields(newState);
+            }
+        }).catch(err => {
+            console.log(`Error creating task ${data.name}`, err);
+            createCreateTaskAlert();
+        }).finally(() => {
+            // do something?
+        });
     }
-    function validateNumericKeypress(e: any) {
-        const key = e.key;
-        console.log("validate numeric", isNaN(key));
-        if(isNaN(key)){
-            e.preventDefault();
-            e.stopPropagation();
+    function createCreateTaskAlert() {
+        let id = uuidv4();
+        let newTimeout = setTimeout(clearCreateTaskAlert, timeoutMilliseconds, id);
+        let newAlert = {
+            id: id,
+            msg: <>Error creating task.</>,
+            style: "danger",
+            timeout: newTimeout
+        } as AppAlert;
+        setCreateTaskError(newAlert);
+    }
+    function clearCreateTaskAlert(id: string) {
+        if(createTaskError && createTaskError.timeout) {
+            clearTimeout(createTaskError.timeout);
         }
+
+        setCreateTaskError(null);
     }
 
     function whichTasks(){
@@ -122,10 +171,21 @@ function ConfigureTasks(props: GlobalProps) {
         );
     }
 
-    const createTaskSelectOptions = [
-        { "value": "finite", "label": "Count"},
-        { "value": "infinite", "label": "Endless"}
-    ];
+    function handleCreateTaskFormChange(e: any, field: string) {
+        var newValue = e.target.value;
+        if(field === "count") {
+            var parsed = parseInt(newValue);
+            if(isNaN(parsed) || parsed < 1) {
+                newValue = createTaskFields[field];
+            }
+        }
+        
+        var newState = {...createTaskFields};
+        newState[field] = newValue;
+        console.log("set state");
+        setCreateTaskFields(newState);
+    }
+
     return (
         <Container fluid className="configure-container content-container">
             <>
@@ -149,21 +209,26 @@ function ConfigureTasks(props: GlobalProps) {
                         <Form noValidate id="createForm" onSubmit={e => onCreateSubmit(e) }>
                             <InputGroup>
                                 <InputGroup.Text>Name</InputGroup.Text>
-                                <Form.Control type="text" maxLength={20}/>
+                                <Form.Control type="text" maxLength={20} value={createTaskFields.name} onChange={ (e) => handleCreateTaskFormChange(e, "name") } />
                             </InputGroup>
                             <InputGroup className="input-group">
                                 <InputGroup.Text>Type</InputGroup.Text>
-                                <Button onClick={ () => setCreateTaskType("infinite") } variant={ createTaskType === "infinite" ? "secondary" : "outline-secondary" } size="sm">Endless</Button>
-                                <Button onClick={ () => setCreateTaskType("finite") } variant={ createTaskType === "finite" ? "secondary" : "outline-secondary" } size="sm">Count</Button>
+                                <Button value="infinite" onClick={ (e) => handleCreateTaskFormChange(e, "type") } variant={ createTaskFields.type === "infinite" ? "secondary" : "outline-secondary" } size="sm">Endless</Button>
+                                <Button value="finite" onClick={ (e) => handleCreateTaskFormChange(e, "type") } variant={ createTaskFields.type === "finite" ? "secondary" : "outline-secondary" } size="sm">Count</Button>
                             </InputGroup>
-                            { createTaskType === "finite" &&
-                                <InputGroup onKeyDown={ e => validateNumericKeypress(e) }>
+                            { createTaskFields.type === "finite" &&
+                                <InputGroup>
                                     <InputGroup.Text>Goal</InputGroup.Text>
-                                    <Form.Control id="taskGoal" type="number" />
+                                    <Form.Control id="taskGoal" type="number" value={createTaskFields.count}  onChange={ e => handleCreateTaskFormChange(e, "count") } />
                                 </InputGroup>
                             }
                         </Form>
                     </Modal.Body>
+                    { createTaskError !== null && 
+                        <Alert variant="danger" transition={false} >
+                            {createTaskError.msg}
+                        </Alert>
+                    }
                     <Modal.Footer>
                         <Button variant="primary" form="createForm" type="submit">Create</Button>{' '}
                         <Button variant="secondary" onClick={onCloseCreateModal}>Cancel</Button>{' '}

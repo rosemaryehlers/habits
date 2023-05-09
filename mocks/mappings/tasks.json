@@ -67,4 +67,59 @@
             }]
         }
     }
+},
+{
+    "Guid": "e9efd35c-d8f2-46fe-b952-fee5bb6dbbb1",
+    "Priority": 1,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name":"WildcardMatcher",
+                    "Pattern": "/create-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"],
+        "Body": {
+            "Matcher": {
+                "Name": "JsonPartialMatcher",
+                "IgnoreCase": true,
+                "Pattern": "error"
+            }
+        }
+    },
+    "Response": {
+        "StatusCode": 500,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},
+{
+    "Guid": "7d4f0764-82ca-4818-a20a-bd68363e2cfc",
+    "Priority": 100,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/create-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
 }]
