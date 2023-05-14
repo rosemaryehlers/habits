@@ -16,3 +16,7 @@
 .modal-content .input-group:not(:first-child) {
     margin-top: var(--bs-modal-padding);
 }
+
+.configure-container .icon button {
+    margin-right: var(--bs-btn-padding-x);
+}
