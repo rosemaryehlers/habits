@@ -1,0 +1,109 @@
+[{
+    "Guid": "61ead04a-94b3-4e6c-a9bc-ba158dbeb2cf",
+    "Priority": 1,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/add-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"],
+        "Body": {
+            "Matcher": {
+                "Name": "JsonPartialMatcher",
+                "IgnoreCase": true,
+                "Pattern": "{\"taskId\":666}"
+            }
+        }
+    },
+    "Response": {
+        "StatusCode": 500,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},
+{
+    "Guid": "01f3ee1b-052f-42f1-aedc-536a030388a9",
+    "Priority": 100,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/add-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},{
+    "Guid": "22fc12c4-ea96-4a40-883f-2361ff22d808",
+    "Priority": 1,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/remove-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"],
+        "Body": {
+            "Matcher": {
+                "Name": "JsonPartialMatcher",
+                "IgnoreCase": true,
+                "Pattern": "{\"taskId\":666}"
+            }
+        }
+    },
+    "Response": {
+        "StatusCode": 500,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},
+{
+    "Guid": "4122200d-13cf-4405-877a-527b8ca8c7c8",
+    "Priority": 100,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/remove-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+}]

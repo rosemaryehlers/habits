@@ -1,0 +1,117 @@
+import React, { useEffect, useState } from 'react';
+import { Col, Row, Table } from 'react-bootstrap';
+import { GlobalProps, Task } from './GlobalProps';
+
+export interface TaskHistoryProps extends GlobalProps {
+    itemId: number;
+}
+
+interface Entry {
+    dueDate: string;
+    count: number;
+}
+interface ItemHistoryState {
+    entries: Array<Entry>;
+    itemMetadata?: Task;
+    loaded: boolean;
+}
+
+const historyPath = "/history";
+
+function TaskHistory(props: TaskHistoryProps) {
+    // put everything in one object because we want it to be updated together
+    // we don't want a call to render when we've only updated the entries but not the item metadata, etc
+    const [state, setState] = useState<ItemHistoryState>();
+
+    // fetch item history and update state
+    useEffect(() => {
+        if(props.itemId === undefined){
+            return;
+        }
+
+        var url = props.global.baseUrl + 
+            ":" + props.global.port + historyPath + 
+            "?item=" + props.itemId;
+
+        fetch(url, { method: "GET" }).then(resp => {
+            if(!resp.ok){
+                console.log(`Error ${resp.status} fetching history for item ${props.itemId}: ${resp.statusText}`);
+                return undefined;
+            }
+
+            return resp.json();
+        }).then(data => {
+            if(data === undefined){
+                props.global.addAlert("Error fetching history for item.", "danger");
+                setState(undefined);
+                return;
+            }
+
+            let metadata = {
+                name: data.name,
+                type: data.type
+            } as Task;
+            if(data.goal !== undefined){
+                metadata.goal = data.goal;
+            }
+
+            let newState = {
+                entries: data.entries,
+                itemMetadata: metadata,
+                loaded: true
+            } as ItemHistoryState;
+
+            setState(newState);
+        }).catch(err => {
+            console.log(`Error fetching history for item ${props.itemId}: ${err}`);
+            setState(undefined);
+            props.global.addAlert("Error fetching history for item.", "danger");
+        });
+    }, [props.itemId]);
+
+    if(props.itemId === undefined || state === undefined || !state.loaded){
+        return (<div>Loading...</div>);
+    }
+
+    if(state.entries.length === 0){
+        return (<Row><Col>No entries.</Col></Row>);
+    }
+
+    function renderEntrySuccess(entry: Entry){
+        if(state === undefined || state.itemMetadata === undefined){
+            props.global.addAlert("No item metadata!", "danger");
+            return;
+        }
+
+        if(state.itemMetadata.type === "infinite"){
+            return (<span>{ entry.count }</span>);
+        }
+        else if(state.itemMetadata.type === "finite"){
+            if(state.itemMetadata.goal === undefined){
+                props.global.addAlert("No goal for finite item type.", "danger");
+                return;
+            }
+
+            let color = entry.count >= state.itemMetadata.goal ? "success" : "fail";
+            return (<span className={color}>{entry.count} / {state.itemMetadata.goal}</span>);
+        }
+
+        props.global.addAlert("Unknown item type " + state.itemMetadata.type, "danger");
+        return;
+    }
+
+    return (
+        <div className="item-history">
+            {
+                state.entries.map(entry => (
+                    <React.Fragment key={entry.dueDate}>
+                        <div className="left" >{ (new Date(entry.dueDate)).toLocaleDateString("en-us", {month: '2-digit', day: '2-digit'}) }</div>
+                        <div className="right" >{ renderEntrySuccess(entry) }</div>
+                    </React.Fragment>
+                ))
+            }
+        </div>
+    );
+}
+
+export default TaskHistory;

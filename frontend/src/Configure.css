@@ -1,0 +1,22 @@
+.configure-container {
+    display: grid;
+    grid-template-columns: max-content max-content max-content;
+    gap: 10px;
+    width: max-content;
+    padding-top: 10px;
+    justify-content: start;
+}
+
+.configure-container .label,
+.configure-container .center,
+.configure-container .icon {
+    align-self: center;
+}
+
+.modal-content .input-group:not(:first-child) {
+    margin-top: var(--bs-modal-padding);
+}
+
+.configure-container .icon button {
+    margin-right: var(--bs-btn-padding-x);
+}

@@ -1,0 +1,26 @@
+[{
+    "Guid": "694e6d27-03d9-409b-922e-ab91cfe6661f",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/views",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["get"]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "views": [ "Common", "Bathroom", "Empty", "Error" ],
+            "defaultView": "Common"
+        }
+    }
+}]

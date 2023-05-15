@@ -1,0 +1,22 @@
+{
+    "Guid": "67ae335b-5d79-42dc-8ca7-236280ab9111",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/health",
+                    "IgnoreCase": true
+                }
+            ]
+        }
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Body": "{}",
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+}

@@ -1,0 +1,56 @@
+.weeks-input {
+    width: 100px;
+}
+span.success {
+    color: #198754;
+}
+span.fail {
+    color: #dc3545;
+}
+
+.history-item-header {
+    padding: .5rem 0;
+}
+
+.history-item-header button.accordion-button {
+    display: flex;
+    align-items: center;
+    padding: .5rem 0;
+    height: 16px;
+}
+
+.history-item-header .right {
+    display: flex;
+    flex-grow: 1;
+    justify-content: end;
+}
+.history-item-header .left {
+    width: max-content;
+}
+
+.item-history {
+    display: grid;
+    grid-template-columns: max-content auto;
+    border-top: 1px dashed #f2f2f2;
+}
+
+.item-history .left {
+    grid-column: 1 / 1;;
+}
+.item-history .right {
+    grid-column: 2 / 2;
+    justify-content: end
+}
+.item-history .left, .item-history .right {
+    display: flex;
+    align-items: center;
+    padding: .5rem 0;
+}
+
+/* overrides */
+.history .accordion-body {
+    padding: 0;
+}
+.history .accordion-item {
+    border-color: #f2f2f2;
+}

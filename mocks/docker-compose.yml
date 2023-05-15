@@ -1,0 +1,10 @@
+version: '3'
+services:
+  mocks:
+    container_name: habits-mocks
+    image: sheyenrath/wiremock.net
+    command: --WireMockLogger WireMockConsoleLogger --ReadStaticMappings true
+    volumes:
+      - './mappings:/app/__admin/mappings'
+    ports:
+      - '80'

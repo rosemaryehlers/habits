@@ -1,0 +1,505 @@
+[
+{
+    "Guid": "531fe79b-5444-4d20-9d21-debf4cb13a5e",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/history",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Params": [
+            {
+                "Name": "view",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "Common"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "items": [
+                {
+                    "id": 1,
+                    "name": "Clean Kitchen",
+                    "type": "finite",
+                    "goal": 6,
+                    "count": 4,
+                    "threshold": {
+                        "success": 85,
+                        "fail": 67
+                    }
+                },
+                {
+                    "id": 2,
+                    "name": "Clean Living Room",
+                    "type": "finite",
+                    "goal": 6,
+                    "count": 6,
+                    "threshold": {
+                        "success": 85,
+                        "fail": 67
+                    }
+                },
+                {
+                    "id": 3,
+                    "name": "Daily Chores",
+                    "type": "infinite",
+                    "count": 8,
+                    "threshold": {
+                        "success": 9,
+                        "fail": 5
+                    }
+                },
+                {
+                    "id": 4,
+                    "name": "Exercise",
+                    "type": "finite",
+                    "goal": 24,
+                    "count": 19,
+                    "threshold": {
+                        "success": 85,
+                        "fail": 67
+                    }
+                },
+                {
+                    "id": 666,
+                    "name": "Error",
+                    "type": "finite",
+                    "goal": 666,
+                    "count": 13,
+                    "threshold": {
+                        "success": 100,
+                        "fail": 99
+                    }
+                }
+            ]
+        }
+    }
+},
+{
+    "Guid": "155e0e75-7863-43fd-86b2-2c9ef172718a",
+    "Request": {
+        "Path": {
+            "Matchers": [{
+                "Name": "WildcardMatcher",
+                "IgnoreCase": true,
+                "Pattern": "/history"
+            }]
+        },
+        "Params": [
+            {
+                "Name": "item",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "1"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "name": "Clean Kitchen",
+            "type": "finite",
+            "goal": 1,
+            "entries": [
+                {
+                    "dueDate": "06/14/2022",
+                    "count": 1
+                },
+                {
+                    "dueDate": "06/07/2022",
+                    "count": 1
+                },
+                {
+                    "dueDate": "06/01/2022",
+                    "count": 0
+                },
+                {
+                    "dueDate": "05/21/2022",
+                    "count": 1
+                },
+                {
+                    "dueDate": "05/14/2022",
+                    "count": 0
+                },
+                {
+                    "dueDate": "05/07/2022",
+                    "count": 1
+                }
+            ]
+        }
+    }
+},
+{
+    "Guid": "e0e104ae-7633-4344-b77b-bd370780466f",
+    "Request": {
+        "Path": {
+            "Matchers": [{
+                "Name": "WildcardMatcher",
+                "IgnoreCase": true,
+                "Pattern": "/history"
+            }]
+        },
+        "Params": [
+            {
+                "Name": "item",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "2"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "name": "Clean Living Room",
+            "type": "finite",
+            "goal": 1,
+            "entries": []
+        }
+    }
+},
+{
+    "Guid": "a43ef8bb-5a87-446b-a2e6-b571c417fff2",
+    "Request": {
+        "Path": {
+            "Matchers": [{
+                "Name": "WildcardMatcher",
+                "IgnoreCase": true,
+                "Pattern": "/history"
+            }]
+        },
+        "Params": [
+            {
+                "Name": "item",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "3"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "name": "Daily Chores",
+            "type": "infinite",
+            "entries": [
+                {
+                    "dueDate": "06/14/2022",
+                    "count": 4
+                },
+                {
+                    "dueDate": "06/07/2022",
+                    "count": 1
+                },
+                {
+                    "dueDate": "06/01/2022",
+                    "count": 0
+                },
+                {
+                    "dueDate": "05/21/2022",
+                    "count": 2
+                },
+                {
+                    "dueDate": "05/14/2022",
+                    "count": 3
+                },
+                {
+                    "dueDate": "05/07/2022",
+                    "count": 5
+                }
+            ]
+        }
+    }
+},
+{
+    "Guid": "8589a395-34f4-4d11-818d-ceed9a44d13d",
+    "Request": {
+        "Path": {
+            "Matchers": [{
+                "Name": "WildcardMatcher",
+                "IgnoreCase": true,
+                "Pattern": "/history"
+            }]
+        },
+        "Params": [
+            {
+                "Name": "item",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "4"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "name": "Exercise",
+            "type": "finite",
+            "goal": 4,
+            "entries": [
+                {
+                    "dueDate": "06/14/2022",
+                    "count": 4
+                }
+            ]
+        }
+    }
+},
+{
+    "Guid": "f8531eb1-86da-4081-aff2-948fec289e8d",
+    "Request": {
+        "Path": {
+            "Matchers": [{
+                "Name": "WildcardMatcher",
+                "IgnoreCase": true,
+                "Pattern": "/history"
+            }]
+        },
+        "Params": [
+            {
+                "Name": "item",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "666"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 500,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {}
+    }
+},
+{
+    "Guid": "6a6ccabd-7655-4bdc-9028-f8b53c9bc754",
+    "Request": {
+        "Path": {
+            "Matchers": [{
+                "Name": "WildcardMatcher",
+                "IgnoreCase": true,
+                "Pattern": "/history"
+            }]
+        },
+        "Params": [
+            {
+                "Name": "item",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "11"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "name": "Clean",
+            "type": "finite",
+            "goal": 1,
+            "entries": [
+                {
+                    "dueDate": "06/14/2022",
+                    "count": 1
+                }
+            ]
+        }
+    }
+},
+{
+    "Guid": "184b7815-d15f-4c94-af22-468da36d60a5",
+    "Request": {
+        "Path": {
+            "Matchers": [{
+                "Name": "WildcardMatcher",
+                "IgnoreCase": true,
+                "Pattern": "/history"
+            }]
+        },
+        "Params": [
+            {
+                "Name": "item",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "22"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "name": "Brush Teeth",
+            "type": "infinite",
+            "entries": [
+                {
+                    "dueDate": "06/14/2022",
+                    "count": 6
+                },
+                {
+                    "dueDate":"06/07/2022",
+                    "count": 4
+                }
+            ]
+        }
+    }
+},
+{
+    "Guid": "dfb69340-5650-48a2-b783-9eb801bb0ca3",
+    "Request": {
+        "Path": {
+            "Matchers": [{
+                "Name": "WildcardMatcher",
+                "IgnoreCase": true,
+                "Pattern": "/history"
+            }]
+        },
+        "Params": [
+            {
+                "Name": "item",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "33"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "name": "Floss",
+            "type": "finite",
+            "goal": 4,
+            "entries": [
+                {
+                    "dueDate": "06/14/2022",
+                    "count": 3
+                },
+                {
+                    "dueDate":"06/07/2022",
+                    "count": 4
+                }
+            ]
+        }
+    }
+},
+{
+    "Guid": "",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/history",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Params": [
+            {
+                "Name": "view",
+                "IgnoreCase": true,
+                "Matchers":[{
+                    "Name": "ExactMatcher",
+                    "Pattern": "Bathroom"
+                }]
+            }
+        ]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "items": [
+                {
+                    "id": 11,
+                    "name": "Clean",
+                    "type": "finite",
+                    "goal": 1,
+                    "count": 1,
+                    "threshold": {
+                        "success": 85,
+                        "fail": 67
+                    }
+                },
+                {
+                    "id": 22,
+                    "name": "Brush Teeth",
+                    "type": "infinite",
+                    "count": 10
+                },
+                {
+                    "id": 33,
+                    "name": "Floss",
+                    "type": "finite",
+                    "goal": 8,
+                    "count": 7,
+                    "threshold": {
+                        "success": 85,
+                        "fail": 67
+                    }
+                }
+            ]
+        }
+    }
+}
+]

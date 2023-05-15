@@ -1,0 +1,23 @@
+/*
+.settings-modal button {
+    margin-bottom: var(--bs-modal-padding);
+}
+.settings-modal button.close {
+    margin-bottom: 0;
+}
+*/
+
+.navigation-container .navbar {
+    order: 1;
+}
+.navigation-container .content-header {
+    order: 2;
+    flex-grow: 1;
+}
+.navigation-container .configure.btn {
+    order: 3;
+}
+
+.navigation-container .btn-group {
+    margin-right: 0.5rem;
+}

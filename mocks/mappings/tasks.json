@@ -1,0 +1,235 @@
+[{
+    "Guid": "f76cd280-4f6e-4ff0-a047-2b06a4062f58",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/tasks",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["get"]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "BodyAsJson": {
+            "tasks": [{
+                "id": 1,
+                "name": "Clean Kitchen",
+                "type": "finite",
+                "goal": 1
+            },
+            {
+                "id": 2,
+                "name": "Clean Living Room",
+                "type": "finite",
+                "goal": 1
+            },
+            {
+                "id": 3,
+                "name": "Daily Chores",
+                "type": "infinite"
+            },
+            {
+                "id": 4,
+                "name": "Exercise",
+                "type": "finite",
+                "goal": 4
+            },
+            {
+                "id": 666,
+                "name": "Error",
+                "type": "finite",
+                "goal": 1
+            },
+            {
+                "id": 11,
+                "name": "Clean",
+                "type": "finite",
+                "goal": 1
+            },
+            {
+                "id": 22,
+                "name": "Brush Teeth",
+                "type": "infinite"
+            },
+            {
+                "id": 33,
+                "name": "Floss",
+                "type": "finite",
+                "goal": 4
+            }]
+        }
+    }
+},
+{
+    "Guid": "e9efd35c-d8f2-46fe-b952-fee5bb6dbbb1",
+    "Priority": 1,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name":"WildcardMatcher",
+                    "Pattern": "/create-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"],
+        "Body": {
+            "Matcher": {
+                "Name": "JsonPartialMatcher",
+                "IgnoreCase": true,
+                "Pattern": "{\"name\":\"error\"}"
+            }
+        }
+    },
+    "Response": {
+        "StatusCode": 500,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},
+{
+    "Guid": "7d4f0764-82ca-4818-a20a-bd68363e2cfc",
+    "Priority": 100,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/create-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},
+{
+    "Guid": "b95809a9-1e6e-4a70-8510-b736128f1994",
+    "Priority": 1,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name":"WildcardMatcher",
+                    "Pattern": "/delete-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"],
+        "Body": {
+            "Matcher": {
+                "Name": "JsonPartialMatcher",
+                "IgnoreCase": true,
+                "Pattern": "{\"id\":666}"
+            }
+        }
+    },
+    "Response": {
+        "StatusCode": 500,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},
+{
+    "Guid": "78d17b5f-b7b7-4ed3-8f0b-f3e0c6cc2cc6",
+    "Priority": 100,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/delete-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},
+{
+    "Guid": "ff1b6203-82d8-42af-a44f-33ce0e96daa3",
+    "Priority": 1,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name":"WildcardMatcher",
+                    "Pattern": "/edit-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"],
+        "Body": {
+            "Matcher": {
+                "Name": "JsonPartialMatcher",
+                "IgnoreCase": true,
+                "Pattern": "{\"id\":666}"
+            }
+        }
+    },
+    "Response": {
+        "StatusCode": 500,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+},
+{
+    "Guid": "f09ae29b-0df6-4066-a0e2-83e64fe6a024",
+    "Priority": 100,
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/edit-task",
+                    "IgnoreCase": true
+                }
+            ]
+        },
+        "Methods": ["post"]
+    },
+    "Response": {
+        "StatusCode": 200,
+        "BodyAsJson": {},
+        "Headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    }
+}]
