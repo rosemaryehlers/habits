@@ -1,0 +1,10 @@
+version: '3'
+services:
+  backend:
+    container_name: habits-backend
+    image: habits:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - '80'

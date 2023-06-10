@@ -1,28 +1,14 @@
-package main
+package habits
 
 import (
-    "fmt"
-    "net/http"
+    gobase
 )
 
-func hello(w http.ResponseWriter, req *http.Request) {
-
-    fmt.Fprintf(w, "hello\n")
-}
-
-func headers(w http.ResponseWriter, req *http.Request) {
-
-    for name, headers := range req.Header {
-        for _, h := range headers {
-            fmt.Fprintf(w, "%v: %v\n", name, h)
-        }
-    }
-}
-
 func main() {
+    l := NewLogger()
+    r := NewRouter(l)
+    s := &HttpServer{log: l, router: r}
+    defer s.Start()
 
-    http.HandleFunc("/hello", hello)
-    http.HandleFunc("/headers", headers)
-
-    http.ListenAndServe(":8090", nil)
+    //r.HandleFunc("GET", "/ping", Pong())
 }
