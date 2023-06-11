@@ -1,13 +1,13 @@
 package habits
 
 import (
-    gobase
+    "gobase"
 )
 
 func main() {
-    l := NewLogger()
-    r := NewRouter(l)
-    s := &HttpServer{log: l, router: r}
+    l := gobase.NewLogger()
+    r := gobase.NewRouter(l)
+    s := gobase.NewHttpServer(l, r)
     defer s.Start()
 
     //r.HandleFunc("GET", "/ping", Pong())

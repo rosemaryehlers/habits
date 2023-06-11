@@ -2,9 +2,9 @@
 
 Run a go container for commands like `go mod tidy` and suchlike:
 ```
-docker run -it -v $(pwd):/app golang:1.20-alpine /bin/sh
+docker run -it -v $(pwd):/app -w /app golang:1.20-alpine /bin/sh
 ```
-Either be in the /src folder or update the source path to the src folder to correctly bind the folder to the container.
+Sets the current directory as the volume.
 
 ### FOLDERS ARE FORBIDDEN
 You always forget that anything inside a folder is no longer part of the package, because golang hates you. You have to use a `replace` in the go.mod file to point the import to the local folder.

@@ -1,4 +1,4 @@
-package habits
+package gobase
 
 import (
 	"context"
@@ -9,6 +9,13 @@ type HttpServer struct {
 	log    Logger
 	router *Router
 	http   *http.Server
+}
+
+func NewHttpServer(l Logger, r *Router) *HttpServer {
+	s := new(HttpServer)
+	s.log = l
+	s.router = r
+	return s
 }
 
 func (s *HttpServer) Start() {

@@ -1,4 +1,4 @@
-package habits
+package gobase
 
 import (
 	"context"
