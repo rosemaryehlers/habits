@@ -1,14 +1,12 @@
-package habits
+package main
 
 import (
     "gobase"
 )
 
 func main() {
-    l := gobase.NewLogger()
-    r := gobase.NewRouter(l)
-    s := gobase.NewHttpServer(l, r)
-    defer s.Start()
+    a := gobase.NewApplication()
+    defer a.Lifecycle.Begin()
 
-    //r.HandleFunc("GET", "/ping", Pong())
+    a.WithHttpServer()
 }

@@ -5,6 +5,10 @@ services:
     image: habits:latest
     build:
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
+    environment:
+      - CONFIG_FILE=/app/config.ini
+    volumes:
+      - ./src/config.ini:/app/config.ini
     ports:
       - '80'

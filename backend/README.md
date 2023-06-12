@@ -20,3 +20,5 @@ require (
 replace gobase v1.0.0 => /golang
 ```
 You can now import it as 'gobase' into other packages.
+
+### The package being executed must be named main. Only library packages can have custom names
