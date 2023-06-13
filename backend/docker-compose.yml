@@ -12,3 +12,12 @@ services:
       - ./src/config.ini:/app/config.ini
     ports:
       - '80'
+  sql:
+    container_name: habits-sql
+    image: mariadb:10.5.8-focal
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d
+    env_file:
+      - ./sql/envvars
+    ports:
+      - '3306'

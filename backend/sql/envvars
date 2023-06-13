@@ -1,0 +1,4 @@
+MYSQL_ROOT_PASSWORD=purple
+MYSQL_DATABASE=habits
+MYSQL_USER=application
+MYSQL_PASSWORD=blue
