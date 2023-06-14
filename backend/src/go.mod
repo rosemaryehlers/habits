@@ -4,6 +4,8 @@ go 1.20
 
 require gobase v1.0.0
 
+require endpoints v1.0.0
+
 require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
@@ -25,3 +27,5 @@ require (
 )
 
 replace gobase v1.0.0 => ./golang
+
+replace endpoints v1.0.0 => ./endpoints

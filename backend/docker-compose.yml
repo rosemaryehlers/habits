@@ -12,6 +12,30 @@ services:
       - ./src/config.ini:/app/config.ini
     ports:
       - '80'
+  backend-test:
+    container_name: habits-backend-test
+    image: habits:latest
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    environment:
+      - CONFIG_FILE=/app/config.test.ini
+    volumes:
+      - ./src/config.test.ini:/app/config.test.ini
+    ports:
+      - '80'
+  tests:
+    container_name: habits-tests
+    image: test-runner:latest
+    volumes:
+      - ./tests:/tests
+    env_file:
+      - ./tests/envvars
+  test-runner:
+    image: test-runner:latest
+    build:
+      context: ./test-runner/
+      dockerfile: Dockerfile
   sql:
     container_name: habits-sql
     image: mariadb:10.5.8-focal
@@ -19,5 +43,14 @@ services:
       - ./sql/:/docker-entrypoint-initdb.d
     env_file:
       - ./sql/envvars
+    ports:
+      - '3306'
+  sql-test:
+    container_name: habits-sql-test
+    image: mariadb:10.5.8-focal
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d
+    env_file:
+      - ./sql/envvarstest
     ports:
       - '3306'
