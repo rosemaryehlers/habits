@@ -8,6 +8,8 @@ services:
       dockerfile: ./Dockerfile
     environment:
       - CONFIG_FILE=/app/config.ini
+    networks:
+      - prod
     volumes:
       - ./src/config.ini:/app/config.ini
     ports:
@@ -20,6 +22,8 @@ services:
       dockerfile: ./Dockerfile
     environment:
       - CONFIG_FILE=/app/config.test.ini
+    networks:
+      - test
     volumes:
       - ./src/config.test.ini:/app/config.test.ini
     ports:
@@ -31,6 +35,8 @@ services:
       - ./tests:/tests
     env_file:
       - ./tests/envvars
+    networks:
+      - test
   test-runner:
     image: test-runner:latest
     build:
@@ -43,6 +49,8 @@ services:
       - ./sql/:/docker-entrypoint-initdb.d
     env_file:
       - ./sql/envvars
+    networks:
+      - prod
     ports:
       - '3306'
   sql-test:
@@ -52,5 +60,10 @@ services:
       - ./sql/:/docker-entrypoint-initdb.d
     env_file:
       - ./sql/envvarstest
+    networks:
+      - test
     ports:
       - '3306'
+networks:
+  test:
+  prod:

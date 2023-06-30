@@ -22,3 +22,10 @@ replace gobase v1.0.0 => /golang
 You can now import it as 'gobase' into other packages.
 
 ### The package being executed must be named main. Only library packages can have custom names
+
+### exec: ??? permission denied: unknown
+May be due to the executable bit of the file not being set. To check, exec into the build container. `--entrypoint=` will override any other entrypoint arguments, whereas adding it at the end of the `run` command will add on to any existing entrypoint arguments.
+
+Once in the container, ls -alh <filename>, and you want an x
+
+If there's no x, set the executable bit on the host OS with `chmod +x <filename>`

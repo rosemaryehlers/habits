@@ -6,3 +6,6 @@ if [ -f setup.sql ]; then
 		exit 1
 	fi
 fi
+
+# things inside " get automatically escaped, things inside ' do not
+simple_http_test "Get all views" GET 'v1/view/all' "" 200 "View_All_Response.json"

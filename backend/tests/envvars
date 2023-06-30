@@ -1,4 +1,4 @@
-SERVICE_URL=habits-backend
+SERVICE_URL=habits-backend-test
 MYSQL_HOSTNAME=sql-test
 MYSQL_USERNAME=test
 MYSQL_PASSWORD=yellow

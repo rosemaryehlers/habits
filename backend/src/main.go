@@ -13,6 +13,6 @@ func main() {
     a.Config.AddConfigFunc(db.Reload)
     
     r := a.WithHttpServer()
-    r.HandleFunc("POST", "/view/create", endpoints.CreateView(db, a.Logger))
-    r.HandleFunc("GET", "/view/all", endpoints.GetAllViews(db, a.Logger))
+    r.HandleFunc("POST", "/v1/view/create", endpoints.CreateView(db, a.Logger))
+    r.HandleFunc("GET", "/v1/view/all", endpoints.GetAllViews(db, a.Logger))
 }
