@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	"database/sql"
     "encoding/json"
     "io"
     "net/http"
@@ -15,12 +14,17 @@ type View struct {
 	Name string `json:"name"`
 }
 
+func FmtError(msg string) any {
+	return struct { error string } { error: msg }
+}
+
 func CreateView(db *gobase.Repository, l gobase.Logger) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         var req View
 		_ = json.NewDecoder(r.Body).Decode(&req)
 		if len(req.Name) == 0 {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(FmtError("Invalid name."))
 			return
 		}
 
@@ -31,6 +35,7 @@ func CreateView(db *gobase.Repository, l gobase.Logger) http.HandlerFunc {
 			return
 		case err == gobase.DuplicateKeyError:
 			w.WriteHeader(http.StatusConflict)
+			json.NewEncoder(w).Encode(FmtError("Name already used."))
 			return
 		case err != nil:
 			w.WriteHeader(http.StatusInternalServerError)
@@ -63,6 +68,67 @@ func GetAllViews(db *gobase.Repository, l gobase.Logger) http.HandlerFunc {
     }
 }
 
+func UpdateView(db *gobase.Repository, l gobase.Logger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req View
+		_ = json.NewDecoder(r.Body).Decode(&req)
+		if len(req.Name) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(FmtError("Invalid name."))
+			return
+		}
+		if req.Id < 1 {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(FmtError("View does not exist."))
+			return
+		}
+
+		err := updateView(db, req)
+		switch {
+		case err == gobase.DatabaseConnectionError:
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		case err == gobase.DuplicateKeyError:
+			w.WriteHeader(http.StatusConflict)
+			json.NewEncoder(w).Encode(FmtError("Name already used."))
+			return
+		case err != nil:
+			w.WriteHeader(http.StatusInternalServerError)
+			io.WriteString(w, err.Error())
+			return
+		default:
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func DeleteView(db *gobase.Repository, l gobase.Logger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req View
+		_ = json.NewDecoder(r.Body).Decode(&req)
+		if req.Id < 1 {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(FmtError("View does not exist."))
+			return
+		}
+
+		err := deleteView(db, req.Id)
+		switch {
+		case err == gobase.DatabaseConnectionError:
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		case err != nil:
+			w.WriteHeader(http.StatusInternalServerError)
+			io.WriteString(w, err.Error())
+			return
+		default:
+		}
+
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
 // database access methods
 func createView(r *gobase.Repository, name string) (*View, error) {
 	if r.DB == nil {
@@ -83,19 +149,6 @@ func createView(r *gobase.Repository, name string) (*View, error) {
 
 	id, err := res.LastInsertId()
 	return &View{Id: id, Name: name}, err
-}
-
-func getViewByName(r *gobase.Repository, username string) (*View, error) {
-	if r.DB == nil {
-		return nil, gobase.DatabaseConnectionError
-	}
-
-	var view View
-	err := r.DB.QueryRow("SELECT `id`,`name` FROM `views` WHERE `name`=?", username).Scan(&view.Id, &view.Name)
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
-	return &view, err
 }
 
 func getAllViews(r *gobase.Repository) ([]View, error) {
@@ -120,4 +173,44 @@ func getAllViews(r *gobase.Repository) ([]View, error) {
 	}
 	err = rows.Err()
 	return views, err
+}
+
+func updateView(r *gobase.Repository, view View) error {
+	if r.DB == nil {
+		return gobase.DatabaseConnectionError
+	}
+
+	_, err := r.DB.Exec("UPDATE `views` SET `name` = `?` WHERE id = ?", view.Name, view.Id)
+	if err != nil {
+		sqlErr, ok := err.(*mysql.MySQLError)
+		if !ok {
+			return err
+		}
+		if sqlErr.Number == 1062 {
+			return gobase.DuplicateKeyError
+		}
+		return err
+	}
+
+	return err
+}
+
+func deleteView(r *gobase.Repository, id int64) error {
+	if r.DB == nil {
+		return gobase.DatabaseConnectionError
+	}
+
+	_, err := r.DB.Exec("DELETE FROM `views` WHERE id = ?", id)
+	if err != nil {
+		sqlErr, ok := err.(*mysql.MySQLError)
+		if !ok {
+			return err
+		}
+		if sqlErr.Number == 1062 {
+			return gobase.DuplicateKeyError
+		}
+		return err
+	}
+
+	return err
 }

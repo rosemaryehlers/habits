@@ -42,6 +42,16 @@ services:
     build:
       context: ./test-runner/
       dockerfile: Dockerfile
+  testsv2:
+    container_name: testsv2
+    image: testsv2
+    build:
+      context: ./testsv2
+      dockerfile: Dockerfile
+    environment:
+      - CONFIG_FILE=/app/config.ini
+    networks:
+      - test
   sql:
     container_name: habits-sql
     image: mariadb:10.5.8-focal
