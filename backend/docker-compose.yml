@@ -48,6 +48,9 @@ services:
     build:
       context: ./testsv2
       dockerfile: Dockerfile
+    depends_on:
+      - sql-test
+      - backend-test
     environment:
       - CONFIG_FILE=/app/config.ini
     networks:

@@ -17,7 +17,7 @@ type View struct {
 	name string
 }
 
-func GetAllViews(env *tr.TestEnvvars){
+func TestGetAllViews(env *tr.TestEnvvars){
 	req := tr.RequestInputs{
 		Method: tr.GET,
 		Path: "/v1/view/all",

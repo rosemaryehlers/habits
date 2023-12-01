@@ -4,29 +4,28 @@ import(
 	"fmt"
 	"os"
 	"path"
+	"testing"
 
 	tr "testrunner"
-	"views"
+	//"views"
 
 	"github.com/spf13/viper"
 )
 
-func main() {
+func main() { }
+
+func TestMain(m *testing.M) {
 	LoadConfig()
 	domain := viper.GetString("Config.Domain")
 
-	testEnvvars := tr.TestEnvvars{
+	_ = tr.TestEnvvars{
 		Domain: domain,
 	}
 
 	fmt.Println("Starting test run")
-
-	tests := views.Tests()
-	for i := 0; i < len(tests); i++ {
-		tests[i](&testEnvvars)
-	}
-
+	e := m.Run()
 	fmt.Println("Test run ended.")
+	os.Exit(e)
 }
 
 func LoadConfig() {
