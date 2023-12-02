@@ -1,4 +1,4 @@
-package testrunner
+package tests
 
 import(
 	"bytes"
@@ -6,6 +6,11 @@ import(
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path"
+	"sync"
+
+	"github.com/spf13/viper"
 )
 
 type Method int
@@ -24,9 +29,6 @@ func (m Method) String() string {
 	}
 }
 
-type TestEnvvars struct {
-	Domain string
-}
 type RequestInputs struct {
 	Method	Method
 	Path	string
@@ -41,6 +43,27 @@ type TestResults struct {
 	Diff []string
 }
 
+var (
+	domain string
+	domainOnce sync.Once
+)
+
+func GetDomain() string {
+	domainOnce.Do(func() {
+		configFile := os.Getenv("CONFIG_FILE")
+		viper.SetConfigName(path.Base(configFile))
+		viper.SetConfigType(path.Ext(configFile)[1:])
+		viper.AddConfigPath(path.Dir(configFile))
+		err := viper.ReadInConfig()
+		if err != nil {
+			fmt.Printf("Fatal error config file: %v, %v \n", configFile, err)
+			return
+		}
+		domain = viper.GetString("Config.Domain")
+
+	})
+	return domain
+}
 // this is super sus
 func compareJson(expects any, actual string) (bool, error) {
 	jsonStr, err := json.Marshal(expects)
@@ -50,8 +73,8 @@ func compareJson(expects any, actual string) (bool, error) {
 	return string(jsonStr) == actual, nil
 }
 
-func (env *TestEnvvars) HttpTest(name string, reqInputs RequestInputs, expects Expects) {
-	results, err := env.doHttpTest(reqInputs, expects)
+func HttpTest(name string, reqInputs RequestInputs, expects Expects) {
+	results, err := doHttpTest(reqInputs, expects)
 	if err != nil {
 		fmt.Printf("%v: Error, could not complete. %v \n", name, err)
 		return
@@ -65,7 +88,7 @@ func (env *TestEnvvars) HttpTest(name string, reqInputs RequestInputs, expects E
 		}
 	}
 }
-func (env *TestEnvvars) doHttpTest(reqInputs RequestInputs, expects Expects) (TestResults, error) {
+func doHttpTest(reqInputs RequestInputs, expects Expects) (TestResults, error) {
 	var req *http.Request
 	var err error
 	var log []string
@@ -79,7 +102,7 @@ func (env *TestEnvvars) doHttpTest(reqInputs RequestInputs, expects Expects) (Te
 	}
 	log = append(log, "Building request with inputs: " + string(reqJson))
 
-	url := "http://" + env.Domain + reqInputs.Path
+	url := "http://" + GetDomain() + reqInputs.Path
 	if reqInputs.Method == GET {
 		req, err = http.NewRequest(GET.String(), url, nil)
 	} else if reqInputs.Method == POST {

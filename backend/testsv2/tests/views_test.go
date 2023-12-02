@@ -1,23 +1,22 @@
-package views
+package tests
 
 import (
     //"encoding/json"
     //"io"
     //"net/http"
 	//"fmt"
+	"testing"
 
 	//"github.com/go-sql-driver/mysql"
 	tr "testrunner"
 )
-
-var tests []func(*tr.TestEnvvars)
 
 type View struct {
 	id int64
 	name string
 }
 
-func TestGetAllViews(env *tr.TestEnvvars){
+func TestGetAllViews(t *testing.T){
 	req := tr.RequestInputs{
 		Method: tr.GET,
 		Path: "/v1/view/all",
@@ -31,9 +30,5 @@ func TestGetAllViews(env *tr.TestEnvvars){
 		Status: 200,
 		Body: expectedBody,
 	}
-	env.HttpTest("Get All Views", req, expects)
-}
-func Tests() []func(*tr.TestEnvvars) {
-	tests = append(tests, GetAllViews)
-	return tests
+	tr.HttpTest("Get All Views", req, expects)
 }
