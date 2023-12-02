@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	//"github.com/go-sql-driver/mysql"
-	tr "testrunner"
 )
 
 type View struct {
@@ -17,8 +16,8 @@ type View struct {
 }
 
 func TestGetAllViews(t *testing.T){
-	req := tr.RequestInputs{
-		Method: tr.GET,
+	req := RequestInputs{
+		Method: GET,
 		Path: "/v1/view/all",
 	}
 	expectedBody := []View{
@@ -26,9 +25,9 @@ func TestGetAllViews(t *testing.T){
 		View{ id: 2, name: "one" },
 		View{ id: 3, name: "two" },
 	}
-	expects := tr.Expects{
+	expects := Expects{
 		Status: 200,
 		Body: expectedBody,
 	}
-	tr.HttpTest("Get All Views", req, expects)
+	HttpTest("Get All Views", req, expects)
 }

@@ -11,4 +11,4 @@ RUN if [ "$(which apk)" ]; then apk --no-cache add ca-certificates; fi
 EXPOSE 80
 
 #ENTRYPOINT ["sh", "-c", "/app/tests"]
-ENTRYPOINT ["go", "test", "-v ./..."]
+ENTRYPOINT ["go", "test", "-v", "./..."]
