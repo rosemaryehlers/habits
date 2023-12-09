@@ -8,9 +8,11 @@ import(
 	"net/http"
 	"os"
 	"path"
+	"testing"
 	"sync"
 
 	"github.com/spf13/viper"
+	"gobase"
 )
 
 type Method int
@@ -47,9 +49,9 @@ var (
 	domain string
 	domainOnce sync.Once
 )
-
 func GetDomain() string {
 	domainOnce.Do(func() {
+		fmt.Println("setup domain")
 		configFile := os.Getenv("CONFIG_FILE")
 		viper.SetConfigName(path.Base(configFile))
 		viper.SetConfigType(path.Ext(configFile)[1:])
@@ -62,8 +64,18 @@ func GetDomain() string {
 		domain = viper.GetString("Config.Domain")
 
 	})
+	fmt.Println("return domain")
 	return domain
 }
+
+var db *gobase.Repository
+func SetDB(database *gobase.Repository) {
+	db = database
+}
+func GetDB() *gobase.Repository {
+	return db
+}
+
 // this is super sus
 func compareJson(expects any, actual string) (bool, error) {
 	jsonStr, err := json.Marshal(expects)
@@ -73,16 +85,17 @@ func compareJson(expects any, actual string) (bool, error) {
 	return string(jsonStr) == actual, nil
 }
 
-func HttpTest(name string, reqInputs RequestInputs, expects Expects) {
+func HttpTest(t *testing.T, name string, reqInputs RequestInputs, expects Expects) {
 	results, err := doHttpTest(reqInputs, expects)
 	if err != nil {
-		fmt.Printf("%v: Error, could not complete. %v \n", name, err)
+		t.Errorf("%v: Error, could not complete. %v \n", name, err)
 		return
 	}
 	if results.Success {
 		fmt.Printf("%v: Success \n", name)
 	} else {
 		fmt.Printf("%v: Failed \n", name)
+		t.Fail()
 		for i := 0; i < len(results.Diff); i++ {
 			fmt.Println(results.Diff[i])
 		}

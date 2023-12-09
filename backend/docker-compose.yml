@@ -46,8 +46,8 @@ services:
     container_name: testsv2
     image: testsv2
     build:
-      context: ./testsv2
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./testsv2/Dockerfile
     depends_on:
       - sql-test
       - backend-test

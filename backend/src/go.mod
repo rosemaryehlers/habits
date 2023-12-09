@@ -26,6 +26,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace gobase v1.0.0 => ./golang
+replace gobase v1.0.0 => ./gobase
 
 replace endpoints v1.0.0 => ./endpoints
