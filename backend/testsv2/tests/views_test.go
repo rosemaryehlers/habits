@@ -1,17 +1,12 @@
 package tests
 
 import (
-    //"encoding/json"
-    //"io"
-    //"net/http"
-	//"fmt"
-	//"database/sql"
 	"testing"
 )
 
 type View struct {
-	id int64
-	name string
+	Id int64 `json:id`
+	Name string `json:name`
 }
 
 func TestGetAllViews(t *testing.T){
@@ -21,11 +16,7 @@ func TestGetAllViews(t *testing.T){
 		Method: GET,
 		Path: "/v1/view/all",
 	}
-	expectedBody := []View{
-		View{ id: 1, name: "delete me" },
-		View{ id: 2, name: "one" },
-		View{ id: 3, name: "two" },
-	}
+	expectedBody := `[{"id":1,"name":"delete me"},{"id":2,"name":"one"},{"id":3,"name":"two"}]`
 	expects := Expects{
 		Status: 200,
 		Body: expectedBody,

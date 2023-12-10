@@ -38,7 +38,7 @@ type RequestInputs struct {
 }
 type Expects struct {
 	Status	int
-	Body any
+	Body string
 }
 type TestResults struct {
 	Success bool
@@ -107,15 +107,6 @@ func RunScript(filename string, t *testing.T) error {
 	}
 
 	return nil
-}
-
-// this is super sus
-func compareJson(expects any, actual string) (bool, error) {
-	jsonStr, err := json.Marshal(expects)
-	if err != nil {
-		return false, err
-	}
-	return string(jsonStr) == actual, nil
 }
 
 func HttpTest(t *testing.T, name string, reqInputs RequestInputs, expects Expects) {
@@ -197,15 +188,7 @@ func doHttpTest(reqInputs RequestInputs, expects Expects) (TestResults, error) {
 		log = append(log, fmt.Sprintf("Expected: %v \nGot: %v", expects.Status, resp.Status))
 		success = false
 	}
-	sameJson, err := compareJson(expects.Body, bodyStr)
-	if err != nil {
-		log = append(log, "Error marshalling expected body: " + err.Error())
-		return TestResults{
-			Success: false,
-			Diff: log,
-		}, err
-	}
-	if !sameJson {
+	if !(bodyStr == expects.Body) {
 		log = append(log, fmt.Sprintf("Expected: %+v \nGot: %v", expects.Body, bodyStr))
 		success = false
 	}
