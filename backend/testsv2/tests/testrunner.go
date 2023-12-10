@@ -45,13 +45,10 @@ type TestResults struct {
 	Diff []string
 }
 
-var (
-	domain string
-	domainOnce sync.Once
-)
-func GetDomain() string {
-	domainOnce.Do(func() {
-		fmt.Println("setup domain")
+var viperOnce sync.Once
+func initViper() error {
+	var returnErr error
+	viperOnce.Do(func(){
 		configFile := os.Getenv("CONFIG_FILE")
 		viper.SetConfigName(path.Base(configFile))
 		viper.SetConfigType(path.Ext(configFile)[1:])
@@ -59,21 +56,57 @@ func GetDomain() string {
 		err := viper.ReadInConfig()
 		if err != nil {
 			fmt.Printf("Fatal error config file: %v, %v \n", configFile, err)
-			return
+			returnErr = err
 		}
-		domain = viper.GetString("Config.Domain")
-
 	})
-	fmt.Println("return domain")
-	return domain
+	return returnErr
+}
+func GetDomain() (string, error) {
+	err := initViper()
+	if err != nil {
+		return "", err
+	}
+	return viper.GetString("Config.Domain"), nil
 }
 
 var db *gobase.Repository
-func SetDB(database *gobase.Repository) {
-	db = database
-}
-func GetDB() *gobase.Repository {
+var dbOnce sync.Once
+func initDB() *gobase.Repository {
+	dbOnce.Do(func(){
+		err := initViper()
+		if err != nil {
+			fmt.Println("Could not init configuration for database")
+			return
+		}
+		l := gobase.NewLogger()
+		db = gobase.NewRepository(l)
+		db.Reload()
+	})
 	return db
+}
+
+func RunScript(filename string, t *testing.T) error {
+	initDB()
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		t.Logf("Error reading sql setup file %v, could not run tests. %v", filename, err)
+		return err
+	}
+
+	if db == nil {
+		t.Logf("Database connection not set up for executing %v", filename)
+		return err
+	}
+
+	query := string(data[:])
+	fmt.Println(query)
+	_, err = db.DB.Exec(query)
+	if err != nil {
+		t.Logf("Sql setup file %v failed to execute: %v", filename, err)
+		return err
+	}
+
+	return nil
 }
 
 // this is super sus
@@ -115,7 +148,16 @@ func doHttpTest(reqInputs RequestInputs, expects Expects) (TestResults, error) {
 	}
 	log = append(log, "Building request with inputs: " + string(reqJson))
 
-	url := "http://" + GetDomain() + reqInputs.Path
+	domain, err := GetDomain()
+	if err != nil {
+		log = append(log, "Error fetching domain: " + err.Error())
+		return TestResults{
+			Success: false,
+			Diff: log,
+		}, err
+	}
+
+	url := "http://" + domain + reqInputs.Path
 	if reqInputs.Method == GET {
 		req, err = http.NewRequest(GET.String(), url, nil)
 	} else if reqInputs.Method == POST {

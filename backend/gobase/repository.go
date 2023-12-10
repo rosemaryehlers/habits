@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 )
 
@@ -28,6 +29,7 @@ func (r *Repository) Reload() {
 	username := viper.GetString("Sql.Username")
 	password := viper.GetString("Sql.Password")
 	database := viper.GetString("Sql.Database")
+	fmt.Println("DB config", hostname, username, password, database)
 
 	if len(hostname) == 0 || len(username) == 0 || len(password) == 0 || len(database) == 0 {
 		r.l.Error(DatabaseConfigError.Error())
@@ -35,6 +37,7 @@ func (r *Repository) Reload() {
 
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", username, password, hostname, database))
 	if err != nil {
+		fmt.Println(err)
 		r.l.Error(DatabaseConfigError.Error())
 	}
 
