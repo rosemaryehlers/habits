@@ -16,10 +16,15 @@ func TestGetAllViews(t *testing.T){
 		Method: GET,
 		Path: "/v1/view/all",
 	}
-	expectedBody := `[{"id":1,"name":"delete me"},{"id":2,"name":"one"},{"id":3,"name":"two"}]`
-	expects := Expects{
+	expectedBody := []View{
+		View{ Id: 1, Name: "delete me" },
+		View{ Id: 2, Name: "one" },
+		View{ Id: 3, Name: "two" },
+	}
+	expects := Expects[[]View]{
 		Status: 200,
 		Body: expectedBody,
 	}
-	HttpTest(t, "Get All Views", req, expects)
+	result := HttpCall(t, req)
+	ValidateResponse[[]View](t, expects, result)
 }
